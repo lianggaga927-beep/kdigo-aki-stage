@@ -262,6 +262,29 @@
             font-weight: normal;
         }
 
+        .btn-copy {
+            margin-top: 1.5rem;
+            width: 100%;
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 0.7rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-copy:hover {
+            background-color: #cbd5e1;
+            color: #0f172a;
+        }
+
         .disclaimer {
             margin-top: 2rem;
             font-size: 0.75rem;
@@ -339,6 +362,10 @@
         <div id="adviceText" class="result-advice"></div>
         <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">判定細節：</div>
         <div id="reasonText" class="detail-text"></div>
+        
+        <button class="btn-copy" onclick="copyResult()">
+            📋 複製評估結果
+        </button>
     </div>
 
     <div class="disclaimer">
@@ -379,6 +406,38 @@
         document.getElementById('result').style.display = 'none';
     }
 
+    function copyResult() {
+        // 取得主要結果文字
+        const badge = document.getElementById('stageBadge').innerText;
+        const resultMain = document.getElementById('resultText').innerText;
+        
+        // 取得理由區塊的純文字 (innerText 會自動去除 HTML tags 且保留換行)
+        const reasonDiv = document.getElementById('reasonText');
+        const details = reasonDiv.innerText;
+
+        // 組合字串
+        const textToCopy = `[KDIGO AKI Assessment]\nResult: ${badge}\nSummary: ${resultMain}\n\nDetails:\n${details}`;
+
+        // 執行複製
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = document.querySelector('.btn-copy');
+            const originalText = btn.innerHTML;
+            
+            // 視覺回饋
+            btn.innerHTML = '✅ 已複製成功！';
+            btn.style.backgroundColor = '#dcfce7'; // 淺綠色
+            btn.style.color = '#166534';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+            }, 2000);
+        }).catch(err => {
+            alert('複製失敗，請手動選取複製');
+        });
+    }
+
     function calculateAKI() {
         const resultDiv = document.getElementById('result');
         const badge = document.getElementById('stageBadge');
@@ -393,7 +452,7 @@
         uoRateDiv.innerText = '';
         let reasons = [];
 
-        // 1. 優先判定 RRT (Priority Check)
+        // 1. 優先判定 RRT
         const isRRT = document.getElementById('isRRT').checked;
         if (isRRT) {
             resultDiv.style.display = 'block';
@@ -401,8 +460,8 @@
             badge.innerText = 'AKI Stage 3';
             resultText.innerText = '已啟動腎臟替代治療 (RRT)';
             adviceText.innerText = '病人已接受透析治療，依據 KDIGO 定義直接歸類為 Stage 3。';
-            reasonText.innerHTML = '<div class="detail-item">🔴 <strong>RRT:</strong> 使用者勾選已啟動治療。</div>';
-            return; // 結束函式
+            reasonText.innerHTML = '<div class="detail-item">🔴 RRT: 使用者勾選已啟動治療。</div>';
+            return;
         }
 
         // 2. 取得並處理輸入值
@@ -418,7 +477,7 @@
         const is48h = document.getElementById('is48h').checked;
         const is7d = document.getElementById('is7d').checked;
 
-        // 3. 檢查是否有足夠資料進行計算
+        // 3. 檢查是否有足夠資料
         const hasScrInput = !isNaN(baseScr) && !isNaN(currScr);
         const hasUOInput = !isNaN(weight) && !isNaN(uVol) && !isNaN(uTime);
 
@@ -442,31 +501,25 @@
 
             if (increase <= 0) {
                 scrStage = 0;
-                reasons.push(`<div class="detail-item">🟢 <strong>SCr:</strong> 未上升 (${scrInfo})</div>`);
+                reasons.push(`<div class="detail-item">🟢 SCr: 未上升 (${scrInfo})</div>`);
             } else {
-                // 檢查是否符合 AKI 時間窗前提
                 if (!is48h && !is7d) {
-                     reasons.push(`<div class="detail-item">⚪ <strong>SCr:</strong> 數值上升但未符合時間窗 (No AKI)</div>`);
+                     reasons.push(`<div class="detail-item">⚪ SCr: 數值上升但未符合時間窗 (No AKI)</div>`);
                 } else {
-                    // Stage 3 判定: 
-                    // 1. 3倍 baseline (7天內)
-                    // 2. SCr >= 4.0 且急升 >= 0.3 (不管幾倍，只要在AKI時間窗內發生)
                     if ( (ratio >= 3.0 && is7d) || 
                          (currScr >= 4.0 && increase >= 0.3 && (is48h || is7d)) ) {
                         scrStage = 3;
                     }
-                    // Stage 2: 2.0-2.9倍
                     else if (ratio >= 2.0 && is7d) {
                         scrStage = 2;
                     }
-                    // Stage 1: 1.5-1.9倍 OR 增加 >= 0.3 (48h內)
                     else if ( (ratio >= 1.5 && is7d) || (increase >= 0.3 && is48h) ) {
                         scrStage = 1;
                     }
 
                     const colorIcon = scrStage === 3 ? '🔴' : (scrStage === 2 ? '🟠' : (scrStage === 1 ? '🟡' : '🟢'));
                     const stageText = scrStage > 0 ? `Stage ${scrStage}` : 'No AKI';
-                    reasons.push(`<div class="detail-item">${colorIcon} <strong>SCr:</strong> ${stageText} <span style="color:#888; font-size:0.8em">(${scrInfo})</span></div>`);
+                    reasons.push(`<div class="detail-item">${colorIcon} SCr: ${stageText} <span style="color:#888; font-size:0.8em">(${scrInfo})</span></div>`);
                 }
             }
         }
@@ -480,25 +533,22 @@
             const uoRate = uVol / weight / uTime;
             uoRateDiv.innerText = `目前尿量速率: ${uoRate.toFixed(2)} mL/kg/h`;
 
-            // Stage 3: <0.3 (24h) OR Anuria (12h). 這裡 Anuria 放寬為 < 10mL 以容許殘餘尿
             if ( (uoRate < 0.3 && uTime >= 24) || (uVol < 10 && uTime >= 12) ) {
                 uoStage = 3;
             }
-            // Stage 2: <0.5 (12h)
             else if (uoRate < 0.5 && uTime >= 12) {
                 uoStage = 2;
             }
-            // Stage 1: <0.5 (6h)
             else if (uoRate < 0.5 && uTime >= 6) {
                 uoStage = 1;
             }
 
             const colorIcon = uoStage === 3 ? '🔴' : (uoStage === 2 ? '🟠' : (uoStage === 1 ? '🟡' : '🟢'));
             const stageText = uoStage > 0 ? `Stage ${uoStage}` : 'No AKI';
-            reasons.push(`<div class="detail-item">${colorIcon} <strong>UO:</strong> ${stageText} <span style="color:#888; font-size:0.8em">(${uoRate.toFixed(2)} mL/kg/h for ${uTime}h)</span></div>`);
+            reasons.push(`<div class="detail-item">${colorIcon} UO: ${stageText} <span style="color:#888; font-size:0.8em">(${uoRate.toFixed(2)} mL/kg/h for ${uTime}h)</span></div>`);
         }
 
-        // 4. 綜合判定 (取最大值)
+        // 4. 綜合判定
         const finalStage = Math.max(scrStage, uoStage);
 
         resultDiv.style.display = 'block';
