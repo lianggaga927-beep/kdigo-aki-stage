@@ -3,16 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KDIGO 2026 AKI Calculator</title>
+    <title>KDIGO 2026 AKI Calculator (C-U-B System)</title>
     <style>
         :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #2563eb;
+            --primary-color: #0f172a;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #0f172a;
+            --text-color: #1e293b;
             --border-radius: 8px;
-            --border-color: #cbd5e1;
+            --border-color: #e2e8f0;
+            
+            /* Theme Colors */
+            --c-color: #3b82f6; /* Blue */
+            --c-bg: #eff6ff;
+            --u-color: #f59e0b; /* Amber */
+            --u-bg: #fffbeb;
+            --b-color: #8b5cf6; /* Purple */
+            --b-bg: #f5f3ff;
         }
 
         body {
@@ -30,12 +37,12 @@
             padding: 2rem;
             border-radius: var(--border-radius);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 0.2rem;
             text-align: center;
             color: var(--primary-color);
@@ -49,25 +56,39 @@
             font-weight: 500;
         }
 
+        .section-card {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-c { border-top: 4px solid var(--c-color); background-color: var(--c-bg); }
+        .section-u { border-top: 4px solid var(--u-color); background-color: var(--u-bg); }
+        .section-b { border-top: 4px solid var(--b-color); background-color: var(--b-bg); }
+
         .section-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            margin: 1.5rem 0 0.75rem;
-            padding-bottom: 0.25rem;
-            border-bottom: 2px solid var(--border-color);
-            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
+        .title-c { color: #1e3a8a; }
+        .title-u { color: #92400e; }
+        .title-b { color: #4c1d95; }
+
         .form-group {
-            margin-bottom: 1rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
+            margin-bottom: 0.75rem;
         }
         
-        .form-group.full-width {
-            grid-template-columns: 1fr;
-        }
+        .form-group.full-width { grid-template-columns: 1fr; }
 
         label {
             display: block;
@@ -79,27 +100,18 @@
         input[type="number"], select {
             width: 100%;
             padding: 0.5rem;
-            border: 1px solid var(--border-color);
+            border: 1px solid #cbd5e1;
             border-radius: 4px;
             font-size: 0.95rem;
             box-sizing: border-box;
         }
 
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            background: #f1f5f9;
-            padding: 0.75rem;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-        }
-
         .checkbox-item {
             display: flex;
             align-items: flex-start;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #334155;
+            margin-top: 0.5rem;
         }
 
         .checkbox-item input {
@@ -107,10 +119,21 @@
             margin-top: 0.2rem;
         }
 
+        .confounder-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
         .btn-row {
             display: flex;
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
         }
 
         button {
@@ -124,148 +147,185 @@
             transition: all 0.2s;
         }
 
-        .btn-calc { background-color: var(--secondary-color); color: white; }
-        .btn-calc:hover { background-color: var(--primary-color); }
+        .btn-calc { background-color: var(--primary-color); color: white; }
+        .btn-calc:hover { background-color: #334155; }
         .btn-reset { background-color: #e2e8f0; color: #475569; }
         .btn-reset:hover { background-color: #cbd5e1; }
+        .btn-copy { background-color: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; margin-top: 1rem; width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;}
+        .btn-copy:hover { background-color: #e2e8f0; }
 
+        /* Results Section */
         .result-box {
             margin-top: 1.5rem;
             padding: 1.25rem;
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            border: 1px solid #e2e8f0;
             border-radius: var(--border-radius);
             display: none;
+            background: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .stage-badge {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            color: #166534;
-            margin-bottom: 0.5rem;
+            color: #0f172a;
+            margin-bottom: 1rem;
             text-align: center;
-            padding: 0.5rem;
-            background: #dcfce7;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
             border-radius: 4px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .detail-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
+            margin-bottom: 1rem;
             font-size: 0.85rem;
         }
         
         .detail-table th, .detail-table td {
-            border: 1px solid #93c5fd;
-            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            padding: 0.6rem;
             text-align: left;
         }
         
-        .detail-table th { background-color: #dbeafe; color: #1e3a8a; width: 30%; }
+        .detail-table th { width: 25%; }
         
+        /* Row Colors */
+        .row-c th { background-color: var(--c-bg); color: var(--c-color); border-left: 4px solid var(--c-color); }
+        .row-u th { background-color: var(--u-bg); color: var(--u-color); border-left: 4px solid var(--u-color); }
+        .row-b th { background-color: var(--b-bg); color: var(--b-color); border-left: 4px solid var(--b-color); }
+
+        .recommendation-box {
+            background-color: #f0fdfa;
+            border-left: 4px solid #0d9488;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #115e59;
+        }
+        
+        .recommendation-box h4 { margin: 0 0 0.5rem 0; color: #0f766e; }
+        .recommendation-box ul { margin: 0; padding-left: 1.2rem; }
+
         .warning-box {
-            margin-top: 1rem;
             padding: 0.75rem;
             background-color: #fffbeb;
             border-left: 4px solid #f59e0b;
             font-size: 0.8rem;
             color: #92400e;
         }
-
-        .warning-box ul { margin: 0.25rem 0 0 1rem; padding: 0; }
+        .warning-box h4 { margin: 0 0 0.25rem 0; }
+        .warning-box ul { margin: 0; padding-left: 1.2rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>KDIGO 2026 AKI Calculator</h1>
-    <div class="subtitle">基於 2026 公開審閱草案之 C-U-B 獨立分期系統</div>
+    <div class="subtitle">C-U-B 獨立分期與決策輔助系統</div>
 
-    <div class="section-title">Functional Criteria: Serum Creatinine (C-Stage)</div>
-    <div class="form-group">
-        <div>
-            <label>Baseline SCr (mg/dL)</label>
-            <input type="number" id="baseScr" step="0.01">
-        </div>
-        <div>
-            <label>Current SCr (mg/dL)</label>
-            <input type="number" id="currScr" step="0.01">
-        </div>
-    </div>
-    <div class="checkbox-item full-width">
-        <input type="checkbox" id="isRRT">
-        <label for="isRRT">已啟動腎臟替代治療 (Initiation of RRT)</label>
-    </div>
-    <div class="checkbox-item full-width" style="margin-top: 0.5rem;">
-        <input type="checkbox" id="isTimeframe" checked>
-        <label for="isTimeframe">符合時間定義 (48h 內上升 ≥0.3 或 7天內上升 ≥1.5倍)</label>
-    </div>
-
-    <div class="section-title">Functional Criteria: Urine Output (U-Stage)</div>
-    <div class="form-group">
-        <div>
-            <label>Weight (kg)</label>
-            <input type="number" id="weight" step="0.1">
-        </div>
-        <div>
-            <label>Total Urine Vol (mL)</label>
-            <input type="number" id="uVol" step="1">
-        </div>
-    </div>
-    <div class="form-group full-width">
-        <label>Collection Duration (Hours)</label>
-        <input type="number" id="uTime" step="0.5" placeholder="e.g., 6, 12, 24">
-    </div>
-
-    <div class="section-title">Structural Criteria: Biomarker (B-Stage)</div>
-    <div class="form-group full-width">
-        <select id="biomarker">
-            <option value="NotTested">未檢測 (Not Tested)</option>
-            <option value="B0">陰性 (Negative - B0)</option>
-            <option value="B1">陽性 (Positive - B1)</option>
-        </select>
-    </div>
-
-    <div class="section-title">Clinical Limitations & Confounders</div>
-    <div class="checkbox-grid">
-        <div class="checkbox-item">
-            <input type="checkbox" id="conf_diuretic">
-            <label for="conf_diuretic">使用利尿劑 (Diuretics)</label>
+    <!-- C-Stage Section -->
+    <div class="section-card section-c">
+        <div class="section-title title-c">■ C-Stage: Serum Creatinine (SCr)</div>
+        <div class="form-group">
+            <div>
+                <label>Baseline SCr (mg/dL)</label>
+                <input type="number" id="baseScr" step="0.01">
+            </div>
+            <div>
+                <label>Current SCr (mg/dL)</label>
+                <input type="number" id="currScr" step="0.01">
+            </div>
         </div>
         <div class="checkbox-item">
-            <input type="checkbox" id="conf_muscle">
-            <label for="conf_muscle">肌肉量異常/肝功能不全</label>
+            <input type="checkbox" id="isRRT">
+            <label for="isRRT">已啟動腎臟替代治療 (Initiation of RRT)</label>
         </div>
         <div class="checkbox-item">
-            <input type="checkbox" id="conf_meds">
-            <label for="conf_meds">使用 RASi / SGLT2i</label>
+            <input type="checkbox" id="isTimeframe" checked>
+            <label for="isTimeframe">符合定義窗 (48h 內 Δ≥0.3 或 7d 內 ≥1.5倍)</label>
         </div>
-        <div class="checkbox-item">
-            <input type="checkbox" id="conf_preg">
-            <label for="conf_preg">懷孕 (Pregnancy)</label>
+    </div>
+
+    <!-- U-Stage Section -->
+    <div class="section-card section-u">
+        <div class="section-title title-u">■ U-Stage: Urine Output (UO)</div>
+        <div class="form-group">
+            <div>
+                <label>Weight (kg)</label>
+                <input type="number" id="weight" step="0.1">
+            </div>
+            <div>
+                <label>Urine Volume (mL)</label>
+                <input type="number" id="uVol" step="1">
+            </div>
         </div>
+        <div class="form-group full-width">
+            <label>Collection Duration (Hours)</label>
+            <input type="number" id="uTime" step="0.5" placeholder="e.g., 6, 12, 24">
+        </div>
+    </div>
+
+    <!-- B-Stage Section -->
+    <div class="section-card section-b">
+        <div class="section-title title-b">■ B-Stage: Structural Biomarker</div>
+        <div class="form-group full-width">
+            <select id="biomarker">
+                <option value="NotTested">未檢測 (Not Evaluated)</option>
+                <option value="B0">陰性 (Negative - B0)</option>
+                <option value="B1">陽性 (Positive - B1)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="section-title" style="border:none; margin-top: 1rem;">Limitations & Confounders</div>
+    <div class="confounder-grid">
+        <div class="checkbox-item" style="margin:0;"><input type="checkbox" id="conf_diuretic"><label for="conf_diuretic">使用利尿劑</label></div>
+        <div class="checkbox-item" style="margin:0;"><input type="checkbox" id="conf_muscle"><label for="conf_muscle">低肌肉量/肝病</label></div>
+        <div class="checkbox-item" style="margin:0;"><input type="checkbox" id="conf_meds"><label for="conf_meds">使用 RASi/SGLT2i</label></div>
+        <div class="checkbox-item" style="margin:0;"><input type="checkbox" id="conf_preg"><label for="conf_preg">懷孕狀態</label></div>
     </div>
 
     <div class="btn-row">
-        <button class="btn-calc" onclick="calculateAKI()">計算 2026 AKI Stage</button>
-        <button class="btn-reset" onclick="resetForm()">清除</button>
+        <button class="btn-calc" onclick="calculateAKI()">執行分析 (Analyze)</button>
+        <button class="btn-reset" onclick="resetForm()">清除 (Clear)</button>
     </div>
 
+    <!-- Result Box -->
     <div id="resultBox" class="result-box">
         <div id="stageBadge" class="stage-badge"></div>
-        <table class="detail-table" id="detailTable"></table>
+        
+        <table class="detail-table">
+            <tr class="row-c"><th>C-Stage</th><td id="res-c"></td></tr>
+            <tr class="row-u"><th>U-Stage</th><td id="res-u"></td></tr>
+            <tr class="row-b"><th>B-Stage</th><td id="res-b"></td></tr>
+        </table>
+
+        <div id="recommendationBox" class="recommendation-box">
+            <h4>臨床處置建議 (KDIGO 2026 Chapter 3):</h4>
+            <ul id="recList"></ul>
+        </div>
+
         <div id="warningBox" class="warning-box" style="display: none;">
-            <strong>判讀限制警示 (KDIGO 2026 Table 2):</strong>
+            <h4>判讀限制與干擾 (Confounders):</h4>
             <ul id="warningList"></ul>
         </div>
+
+        <button class="btn-copy" onclick="copyResults()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            複製文字摘要 (Copy to Clipboard)
+        </button>
     </div>
 </div>
 
 <script>
+    // Global variable to store raw text for copying
+    let copyTextData = "";
+
     function calculateAKI() {
-        // Inputs
         const bScr = parseFloat(document.getElementById('baseScr').value);
         const cScr = parseFloat(document.getElementById('currScr').value);
         const isRRT = document.getElementById('isRRT').checked;
@@ -277,119 +337,37 @@
 
         const biomarker = document.getElementById('biomarker').value;
 
-        // C-Stage Logic
+        // 1. C-Stage
+        let cStageInt = 0;
         let cStage = "C0";
         let cDesc = "未達標";
         
         if (isRRT) {
-            cStage = "C3";
-            cDesc = "Initiation of RRT";
+            cStageInt = 3; cStage = "C3"; cDesc = "Initiation of RRT";
         } else if (!isNaN(bScr) && !isNaN(cScr) && bScr > 0 && isTimeframe) {
             const ratio = cScr / bScr;
             const diff = cScr - bScr;
-            
             if (ratio >= 3.0 || cScr >= 4.0) {
-                cStage = "C3";
-                cDesc = `≥3.0x baseline 或 SCr ≥4.0 mg/dL (Ratio: ${ratio.toFixed(2)})`;
+                cStageInt = 3; cStage = "C3"; cDesc = `≥3.0x baseline 或 SCr ≥4.0 (Ratio: ${ratio.toFixed(2)})`;
             } else if (ratio >= 2.0 && ratio <= 2.99) {
-                cStage = "C2";
-                cDesc = `2.0-2.9x baseline (Ratio: ${ratio.toFixed(2)})`;
+                cStageInt = 2; cStage = "C2"; cDesc = `2.0-2.9x baseline (Ratio: ${ratio.toFixed(2)})`;
             } else if (ratio >= 1.5 || diff >= 0.3) {
-                cStage = "C1";
-                cDesc = `≥0.3 mg/dL 增加 或 1.5-1.9x baseline`;
+                cStageInt = 1; cStage = "C1"; cDesc = `≥0.3 mg/dL 增加 或 1.5-1.9x baseline`;
             }
         } else if (!isTimeframe && !isNaN(bScr) && !isNaN(cScr)) {
-            cDesc = "數值變化未符合 48h/7d 時間窗限制";
+            cDesc = "數值上升但未符合 48h/7d 時間窗";
         }
 
-        // U-Stage Logic
+        // 2. U-Stage
+        let uStageInt = 0;
         let uStage = "U0";
-        let uDesc = "未達標 / 未輸入完整數據";
+        let uDesc = "未達標 / 資料不完整";
         
         if (!isNaN(wt) && !isNaN(vol) && !isNaN(hrs) && wt > 0 && hrs > 0) {
             const rate = vol / wt / hrs;
             if ((rate < 0.3 && hrs >= 24) || (vol === 0 && hrs > 12)) {
-                uStage = "U3";
+                uStageInt = 3; uStage = "U3";
             } else if (rate < 0.5 && hrs > 12) {
-                uStage = "U2";
+                uStageInt = 2; uStage = "U2";
             } else if (rate < 0.5 && hrs >= 6 && hrs <= 12) {
-                uStage = "U1";
-            }
-            
-            if (uStage !== "U0") {
-                uDesc = `Rate: ${rate.toFixed(2)} ml/kg/h for ${hrs}h`;
-            } else {
-                uDesc = `正常 (Rate: ${rate.toFixed(2)} ml/kg/h)`;
-            }
-        }
-
-        // B-Stage Logic
-        let bStageStr = "";
-        let bDesc = "";
-        if (biomarker === "B1") {
-            bStageStr = " B1";
-            bDesc = "Positive";
-        } else if (biomarker === "B0") {
-            bStageStr = " B0";
-            bDesc = "Negative";
-        } else {
-            bDesc = "Not Evaluated";
-        }
-
-        // Display Results
-        const badge = document.getElementById('stageBadge');
-        if (cStage === "C0" && uStage === "U0" && biomarker !== "B1") {
-            badge.style.color = "#166534";
-            badge.style.backgroundColor = "#dcfce7";
-            badge.innerText = "No AKI Criteria Met";
-        } else {
-            badge.style.color = "#991b1b";
-            badge.style.backgroundColor = "#fee2e2";
-            badge.innerText = `AKI Profile: ${cStage} ${uStage}${bStageStr}`;
-        }
-
-        const tableHTML = `
-            <tr><th>C-Stage (SCr)</th><td><strong>${cStage}</strong>: ${cDesc}</td></tr>
-            <tr><th>U-Stage (Urine)</th><td><strong>${uStage}</strong>: ${uDesc}</td></tr>
-            <tr><th>B-Stage (Biomarker)</th><td><strong>${biomarker === 'NotTested' ? 'N/A' : biomarker}</strong>: ${bDesc}</td></tr>
-        `;
-        document.getElementById('detailTable').innerHTML = tableHTML;
-
-        // Warnings / Limitations Logic
-        const warnings = [];
-        if (document.getElementById('conf_diuretic').checked) {
-            warnings.push("利尿劑可能人為改變尿量，導致 U-Stage 偽陰性或誤判。");
-        }
-        if (document.getElementById('conf_muscle').checked) {
-            warnings.push("肌肉量低或肝功能異常會降低基礎 SCr，可能導致 C-Stage 診斷延遲或漏診。");
-        }
-        if (document.getElementById('conf_meds').checked) {
-            warnings.push("RASi / SGLT2i 引起的血流動力學改變會使 SCr 上升，可能被誤判為實質 AKI。");
-        }
-        if (document.getElementById('conf_preg').checked) {
-            warnings.push("孕期生理性過濾率增加，可能掩蓋早期的 SCr 上升。");
-        }
-
-        const warningBox = document.getElementById('warningBox');
-        const warningList = document.getElementById('warningList');
-        if (warnings.length > 0) {
-            warningBox.style.display = "block";
-            warningList.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
-        } else {
-            warningBox.style.display = "none";
-        }
-
-        document.getElementById('resultBox').style.display = "block";
-    }
-
-    function resetForm() {
-        document.querySelectorAll('input[type="number"]').forEach(el => el.value = '');
-        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-        document.getElementById('isTimeframe').checked = true;
-        document.getElementById('biomarker').value = 'NotTested';
-        document.getElementById('resultBox').style.display = "none";
-    }
-</script>
-
-</body>
-</html>
+                uStage
