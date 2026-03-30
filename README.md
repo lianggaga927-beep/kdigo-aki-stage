@@ -31,7 +31,7 @@
 
 ## 5. 部署與執行 (Deployment)
 本專案為純前端靜態單頁應用 (SPA)，以 HTML/CSS/Vanilla JS 撰寫，無後端伺服器依賴，確保病患數據之隱私安全性。
-* **Live Demo:** [在此填入你的 Github Pages 連結]
+* **Live Demo:** [(https://lianggaga927-beep.github.io/kdigo-aki-stage/)]
 * **Usage:** `Clone` 或下載 `index.html` 即可於任何現代瀏覽器離線執行。
 
 ## 6. Disclaimer
