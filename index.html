@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KDIGO AKI Calculator</title>
+    <title>KDIGO 2026 AKI Calculator</title>
     <style>
         :root {
-            --primary-color: #2563eb;
-            --bg-color: #f3f4f6;
+            --primary-color: #1e3a8a;
+            --secondary-color: #2563eb;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #1f2937;
-            --border-radius: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --text-color: #0f172a;
+            --border-radius: 8px;
+            --border-color: #cbd5e1;
         }
 
         body {
@@ -22,23 +23,20 @@
             justify-content: center;
             padding: 20px;
             line-height: 1.5;
-            min-height: 100vh;
-            box-sizing: border-box;
         }
 
         .container {
             background-color: var(--card-bg);
             padding: 2rem;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            max-width: 480px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
             width: 100%;
-            height: fit-content;
         }
 
         h1 {
             font-size: 1.5rem;
-            margin: 0 0 0.5rem 0;
+            margin-bottom: 0.2rem;
             text-align: center;
             color: var(--primary-color);
         }
@@ -46,535 +44,350 @@
         .subtitle {
             font-size: 0.85rem;
             text-align: center;
-            color: #6b7280;
+            color: #64748b;
             margin-bottom: 1.5rem;
+            font-weight: 500;
         }
 
         .section-title {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: #374151;
             margin: 1.5rem 0 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding-bottom: 0.25rem;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--primary-color);
         }
 
         .form-group {
             margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group.full-width {
+            grid-template-columns: 1fr;
         }
 
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #374151;
+            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
         }
 
-        input[type="number"] {
+        input[type="number"], select {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.95rem;
             box-sizing: border-box;
-            transition: border-color 0.2s;
         }
 
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .checkbox-container {
-            background-color: #f9fafb;
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            background: #f1f5f9;
             padding: 0.75rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
         }
 
-        .checkbox-group {
+        .checkbox-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #4b5563;
-        }
-        
-        .checkbox-group:last-child {
-            margin-bottom: 0;
-        }
-
-        input[type="checkbox"] {
-            margin-top: 0.25rem;
-            margin-right: 0.5rem;
-            cursor: pointer;
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-            padding: 0;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin: 1rem 0;
-        }
-        
-        .toggle-btn:hover {
-            text-decoration: underline;
-        }
-
-        #uo-section {
-            display: none;
-            background-color: #eff6ff;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid #bfdbfe;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .uo-note {
             font-size: 0.8rem;
-            color: #1e40af;
-            margin-bottom: 1rem;
-            background: rgba(255,255,255,0.5);
-            padding: 0.5rem;
-            border-radius: 4px;
+            color: #334155;
+        }
+
+        .checkbox-item input {
+            margin-right: 0.5rem;
+            margin-top: 0.2rem;
         }
 
         .btn-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
+            display: flex;
             gap: 1rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
-        .btn-calc {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.85rem;
+        button {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
-        .btn-calc:hover {
-            background-color: #1d4ed8;
-        }
+        .btn-calc { background-color: var(--secondary-color); color: white; }
+        .btn-calc:hover { background-color: var(--primary-color); }
+        .btn-reset { background-color: #e2e8f0; color: #475569; }
+        .btn-reset:hover { background-color: #cbd5e1; }
 
-        .btn-reset {
-            background-color: white;
-            color: #4b5563;
-            border: 1px solid #d1d5db;
-            padding: 0.85rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .btn-reset:hover {
-            background-color: #f3f4f6;
-        }
-
-        /* Result Section */
         .result-box {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
             border-radius: var(--border-radius);
             display: none;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .stage-badge {
-            display: inline-block;
-            padding: 0.35rem 1rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            color: white;
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .bg-green { background-color: #10b981; }
-        .bg-yellow { background-color: #eab308; }
-        .bg-orange { background-color: #f97316; }
-        .bg-red { background-color: #ef4444; }
-
-        .result-main {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1f2937;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #166534;
             margin-bottom: 0.5rem;
-        }
-
-        .result-advice {
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px dashed #cbd5e1;
-            line-height: 1.6;
-        }
-
-        .detail-text {
-            font-size: 0.85rem;
-            color: #64748b;
-            line-height: 1.6;
-        }
-
-        .detail-item {
-            margin-bottom: 0.4rem;
-        }
-
-        .unit {
-            font-size: 0.85em;
-            color: #9ca3af;
-            font-weight: normal;
-        }
-
-        .btn-copy {
-            margin-top: 1.5rem;
-            width: 100%;
-            background-color: #e2e8f0;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-            padding: 0.7rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-copy:hover {
-            background-color: #cbd5e1;
-            color: #0f172a;
-        }
-
-        .disclaimer {
-            margin-top: 2rem;
-            font-size: 0.75rem;
-            color: #9ca3af;
             text-align: center;
+            padding: 0.5rem;
+            background: #dcfce7;
+            border-radius: 4px;
+            letter-spacing: 1px;
         }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .detail-table th, .detail-table td {
+            border: 1px solid #93c5fd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .detail-table th { background-color: #dbeafe; color: #1e3a8a; width: 30%; }
+        
+        .warning-box {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            font-size: 0.8rem;
+            color: #92400e;
+        }
+
+        .warning-box ul { margin: 0.25rem 0 0 1rem; padding: 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>KDIGO AKI Calculator</h1>
-    <div class="subtitle">依據 KDIGO 2012 臨床實踐指引</div>
+    <h1>KDIGO 2026 AKI Calculator</h1>
+    <div class="subtitle">基於 2026 公開審閱草案之 C-U-B 獨立分期系統</div>
 
-    <div class="section-title">1. 血清肌酸酐 (SCr)</div>
+    <div class="section-title">Functional Criteria: Serum Creatinine (C-Stage)</div>
     <div class="form-group">
-        <label>Baseline SCr <span class="unit">(mg/dL)</span></label>
-        <input type="number" id="baseScr" step="0.01" placeholder="基礎值，例如: 0.8">
+        <div>
+            <label>Baseline SCr (mg/dL)</label>
+            <input type="number" id="baseScr" step="0.01">
+        </div>
+        <div>
+            <label>Current SCr (mg/dL)</label>
+            <input type="number" id="currScr" step="0.01">
+        </div>
+    </div>
+    <div class="checkbox-item full-width">
+        <input type="checkbox" id="isRRT">
+        <label for="isRRT">已啟動腎臟替代治療 (Initiation of RRT)</label>
+    </div>
+    <div class="checkbox-item full-width" style="margin-top: 0.5rem;">
+        <input type="checkbox" id="isTimeframe" checked>
+        <label for="isTimeframe">符合時間定義 (48h 內上升 ≥0.3 或 7天內上升 ≥1.5倍)</label>
     </div>
 
+    <div class="section-title">Functional Criteria: Urine Output (U-Stage)</div>
     <div class="form-group">
-        <label>Current SCr <span class="unit">(mg/dL)</span></label>
-        <input type="number" id="currScr" step="0.01" placeholder="目前值，例如: 1.3">
-    </div>
-
-    <div class="checkbox-container">
-        <div class="checkbox-group">
-            <input type="checkbox" id="is48h" checked>
-            <label for="is48h">變化發生於 48 小時內 (Δ ≥ 0.3)</label>
+        <div>
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" step="0.1">
         </div>
-        <div class="checkbox-group">
-            <input type="checkbox" id="is7d" checked>
-            <label for="is7d">變化發生於 7 天內 (倍數 ≥ 1.5)</label>
+        <div>
+            <label>Total Urine Vol (mL)</label>
+            <input type="number" id="uVol" step="1">
         </div>
     </div>
-
-    <div style="margin-top: 1rem; padding: 0.75rem; background-color: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px;">
-        <div class="checkbox-group" style="margin-bottom: 0;">
-            <input type="checkbox" id="isRRT">
-            <label for="isRRT" style="color: #be123c; font-weight: 700;">已啟動腎臟替代治療 (RRT)</label>
-        </div>
+    <div class="form-group full-width">
+        <label>Collection Duration (Hours)</label>
+        <input type="number" id="uTime" step="0.5" placeholder="e.g., 6, 12, 24">
     </div>
 
-    <button class="toggle-btn" onclick="toggleUO()">
-        <span id="uo-icon">➕</span> 加入尿量 (Urine Output) 與體重評估
-    </button>
+    <div class="section-title">Structural Criteria: Biomarker (B-Stage)</div>
+    <div class="form-group full-width">
+        <select id="biomarker">
+            <option value="NotTested">未檢測 (Not Tested)</option>
+            <option value="B0">陰性 (Negative - B0)</option>
+            <option value="B1">陽性 (Positive - B1)</option>
+        </select>
+    </div>
 
-    <div id="uo-section">
-        <div class="uo-note">
-            💡 建議輸入 6, 12 或 24 小時之總尿量。
+    <div class="section-title">Clinical Limitations & Confounders</div>
+    <div class="checkbox-grid">
+        <div class="checkbox-item">
+            <input type="checkbox" id="conf_diuretic">
+            <label for="conf_diuretic">使用利尿劑 (Diuretics)</label>
         </div>
-        <div class="form-group">
-            <label>體重 Weight <span class="unit">(kg)</span></label>
-            <input type="number" id="weight" step="0.1" placeholder="例如: 60">
+        <div class="checkbox-item">
+            <input type="checkbox" id="conf_muscle">
+            <label for="conf_muscle">肌肉量異常/肝功能不全</label>
         </div>
-        <div class="form-group">
-            <label>總尿量 Total Volume <span class="unit">(mL)</span></label>
-            <input type="number" id="urineVol" placeholder="例如: 200">
+        <div class="checkbox-item">
+            <input type="checkbox" id="conf_meds">
+            <label for="conf_meds">使用 RASi / SGLT2i</label>
         </div>
-        <div class="form-group">
-            <label>收集時間 Duration <span class="unit">(hours)</span></label>
-            <input type="number" id="urineTime" placeholder="例如: 6">
+        <div class="checkbox-item">
+            <input type="checkbox" id="conf_preg">
+            <label for="conf_preg">懷孕 (Pregnancy)</label>
         </div>
-        <div id="uo-rate-display" style="font-weight: 600; color: var(--primary-color); font-size: 0.9rem;"></div>
     </div>
 
     <div class="btn-row">
-        <button class="btn-calc" onclick="calculateAKI()">計算 AKI 分級</button>
-        <button class="btn-reset" onclick="resetForm()">清除重填</button>
+        <button class="btn-calc" onclick="calculateAKI()">計算 2026 AKI Stage</button>
+        <button class="btn-reset" onclick="resetForm()">清除</button>
     </div>
 
-    <div id="result" class="result-box">
+    <div id="resultBox" class="result-box">
         <div id="stageBadge" class="stage-badge"></div>
-        <div id="resultText" class="result-main"></div>
-        <div id="adviceText" class="result-advice"></div>
-        <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">判定細節：</div>
-        <div id="reasonText" class="detail-text"></div>
-        
-        <button class="btn-copy" onclick="copyResult()">
-            📋 複製評估結果
-        </button>
-    </div>
-
-    <div class="disclaimer">
-        免責聲明：本工具僅供醫療專業人員教育與輔助參考，不可取代臨床專業判斷。
-        小兒族群 (Age < 18) 之 eGFR 標準未納入本計算器。
+        <table class="detail-table" id="detailTable"></table>
+        <div id="warningBox" class="warning-box" style="display: none;">
+            <strong>判讀限制警示 (KDIGO 2026 Table 2):</strong>
+            <ul id="warningList"></ul>
+        </div>
     </div>
 </div>
 
 <script>
-    function toggleUO() {
-        const section = document.getElementById('uo-section');
-        const btnText = document.querySelector('.toggle-btn');
-        const icon = document.getElementById('uo-icon');
+    function calculateAKI() {
+        // Inputs
+        const bScr = parseFloat(document.getElementById('baseScr').value);
+        const cScr = parseFloat(document.getElementById('currScr').value);
+        const isRRT = document.getElementById('isRRT').checked;
+        const isTimeframe = document.getElementById('isTimeframe').checked;
+
+        const wt = parseFloat(document.getElementById('weight').value);
+        const vol = parseFloat(document.getElementById('uVol').value);
+        const hrs = parseFloat(document.getElementById('uTime').value);
+
+        const biomarker = document.getElementById('biomarker').value;
+
+        // C-Stage Logic
+        let cStage = "C0";
+        let cDesc = "未達標";
         
-        if (section.style.display === 'block') {
-            section.style.display = 'none';
-            btnText.innerHTML = '<span id="uo-icon">➕</span> 加入尿量 (Urine Output) 與體重評估';
-        } else {
-            section.style.display = 'block';
-            btnText.innerHTML = '<span id="uo-icon">➖</span> 收起尿量評估';
+        if (isRRT) {
+            cStage = "C3";
+            cDesc = "Initiation of RRT";
+        } else if (!isNaN(bScr) && !isNaN(cScr) && bScr > 0 && isTimeframe) {
+            const ratio = cScr / bScr;
+            const diff = cScr - bScr;
+            
+            if (ratio >= 3.0 || cScr >= 4.0) {
+                cStage = "C3";
+                cDesc = `≥3.0x baseline 或 SCr ≥4.0 mg/dL (Ratio: ${ratio.toFixed(2)})`;
+            } else if (ratio >= 2.0 && ratio <= 2.99) {
+                cStage = "C2";
+                cDesc = `2.0-2.9x baseline (Ratio: ${ratio.toFixed(2)})`;
+            } else if (ratio >= 1.5 || diff >= 0.3) {
+                cStage = "C1";
+                cDesc = `≥0.3 mg/dL 增加 或 1.5-1.9x baseline`;
+            }
+        } else if (!isTimeframe && !isNaN(bScr) && !isNaN(cScr)) {
+            cDesc = "數值變化未符合 48h/7d 時間窗限制";
         }
+
+        // U-Stage Logic
+        let uStage = "U0";
+        let uDesc = "未達標 / 未輸入完整數據";
+        
+        if (!isNaN(wt) && !isNaN(vol) && !isNaN(hrs) && wt > 0 && hrs > 0) {
+            const rate = vol / wt / hrs;
+            if ((rate < 0.3 && hrs >= 24) || (vol === 0 && hrs > 12)) {
+                uStage = "U3";
+            } else if (rate < 0.5 && hrs > 12) {
+                uStage = "U2";
+            } else if (rate < 0.5 && hrs >= 6 && hrs <= 12) {
+                uStage = "U1";
+            }
+            
+            if (uStage !== "U0") {
+                uDesc = `Rate: ${rate.toFixed(2)} ml/kg/h for ${hrs}h`;
+            } else {
+                uDesc = `正常 (Rate: ${rate.toFixed(2)} ml/kg/h)`;
+            }
+        }
+
+        // B-Stage Logic
+        let bStageStr = "";
+        let bDesc = "";
+        if (biomarker === "B1") {
+            bStageStr = " B1";
+            bDesc = "Positive";
+        } else if (biomarker === "B0") {
+            bStageStr = " B0";
+            bDesc = "Negative";
+        } else {
+            bDesc = "Not Evaluated";
+        }
+
+        // Display Results
+        const badge = document.getElementById('stageBadge');
+        if (cStage === "C0" && uStage === "U0" && biomarker !== "B1") {
+            badge.style.color = "#166534";
+            badge.style.backgroundColor = "#dcfce7";
+            badge.innerText = "No AKI Criteria Met";
+        } else {
+            badge.style.color = "#991b1b";
+            badge.style.backgroundColor = "#fee2e2";
+            badge.innerText = `AKI Profile: ${cStage} ${uStage}${bStageStr}`;
+        }
+
+        const tableHTML = `
+            <tr><th>C-Stage (SCr)</th><td><strong>${cStage}</strong>: ${cDesc}</td></tr>
+            <tr><th>U-Stage (Urine)</th><td><strong>${uStage}</strong>: ${uDesc}</td></tr>
+            <tr><th>B-Stage (Biomarker)</th><td><strong>${biomarker === 'NotTested' ? 'N/A' : biomarker}</strong>: ${bDesc}</td></tr>
+        `;
+        document.getElementById('detailTable').innerHTML = tableHTML;
+
+        // Warnings / Limitations Logic
+        const warnings = [];
+        if (document.getElementById('conf_diuretic').checked) {
+            warnings.push("利尿劑可能人為改變尿量，導致 U-Stage 偽陰性或誤判。");
+        }
+        if (document.getElementById('conf_muscle').checked) {
+            warnings.push("肌肉量低或肝功能異常會降低基礎 SCr，可能導致 C-Stage 診斷延遲或漏診。");
+        }
+        if (document.getElementById('conf_meds').checked) {
+            warnings.push("RASi / SGLT2i 引起的血流動力學改變會使 SCr 上升，可能被誤判為實質 AKI。");
+        }
+        if (document.getElementById('conf_preg').checked) {
+            warnings.push("孕期生理性過濾率增加，可能掩蓋早期的 SCr 上升。");
+        }
+
+        const warningBox = document.getElementById('warningBox');
+        const warningList = document.getElementById('warningList');
+        if (warnings.length > 0) {
+            warningBox.style.display = "block";
+            warningList.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+        } else {
+            warningBox.style.display = "none";
+        }
+
+        document.getElementById('resultBox').style.display = "block";
     }
 
     function resetForm() {
-        // Inputs
-        document.getElementById('baseScr').value = '';
-        document.getElementById('currScr').value = '';
-        document.getElementById('is48h').checked = true;
-        document.getElementById('is7d').checked = true;
-        document.getElementById('isRRT').checked = false;
-        
-        document.getElementById('weight').value = '';
-        document.getElementById('urineVol').value = '';
-        document.getElementById('urineTime').value = '';
-        document.getElementById('uo-rate-display').innerText = '';
-
-        // Results
-        document.getElementById('result').style.display = 'none';
-    }
-
-    function copyResult() {
-        // 取得主要結果文字
-        const badge = document.getElementById('stageBadge').innerText;
-        const resultMain = document.getElementById('resultText').innerText;
-        
-        // 取得理由區塊的純文字 (innerText 會自動去除 HTML tags 且保留換行)
-        const reasonDiv = document.getElementById('reasonText');
-        const details = reasonDiv.innerText;
-
-        // 組合字串
-        const textToCopy = `[KDIGO AKI Assessment]\nResult: ${badge}\nSummary: ${resultMain}\n\nDetails:\n${details}`;
-
-        // 執行複製
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const btn = document.querySelector('.btn-copy');
-            const originalText = btn.innerHTML;
-            
-            // 視覺回饋
-            btn.innerHTML = '✅ 已複製成功！';
-            btn.style.backgroundColor = '#dcfce7'; // 淺綠色
-            btn.style.color = '#166534';
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.backgroundColor = '';
-                btn.style.color = '';
-            }, 2000);
-        }).catch(err => {
-            alert('複製失敗，請手動選取複製');
-        });
-    }
-
-    function calculateAKI() {
-        const resultDiv = document.getElementById('result');
-        const badge = document.getElementById('stageBadge');
-        const resultText = document.getElementById('resultText');
-        const adviceText = document.getElementById('adviceText');
-        const reasonText = document.getElementById('reasonText');
-        const uoRateDiv = document.getElementById('uo-rate-display');
-
-        // Clear previous results
-        reasonText.innerHTML = '';
-        adviceText.innerText = '';
-        uoRateDiv.innerText = '';
-        let reasons = [];
-
-        // 1. 優先判定 RRT
-        const isRRT = document.getElementById('isRRT').checked;
-        if (isRRT) {
-            resultDiv.style.display = 'block';
-            badge.className = 'stage-badge bg-red';
-            badge.innerText = 'AKI Stage 3';
-            resultText.innerText = '已啟動腎臟替代治療 (RRT)';
-            adviceText.innerText = '病人已接受透析治療，依據 KDIGO 定義直接歸類為 Stage 3。';
-            reasonText.innerHTML = '<div class="detail-item">🔴 RRT: 使用者勾選已啟動治療。</div>';
-            return;
-        }
-
-        // 2. 取得並處理輸入值
-        const baseScrVal = document.getElementById('baseScr').value;
-        const currScrVal = document.getElementById('currScr').value;
-        const baseScr = parseFloat(baseScrVal);
-        const currScr = parseFloat(currScrVal);
-        
-        const weight = parseFloat(document.getElementById('weight').value);
-        const uVol = parseFloat(document.getElementById('urineVol').value);
-        const uTime = parseFloat(document.getElementById('urineTime').value);
-
-        const is48h = document.getElementById('is48h').checked;
-        const is7d = document.getElementById('is7d').checked;
-
-        // 3. 檢查是否有足夠資料
-        const hasScrInput = !isNaN(baseScr) && !isNaN(currScr);
-        const hasUOInput = !isNaN(weight) && !isNaN(uVol) && !isNaN(uTime);
-
-        if (!hasScrInput && !hasUOInput) {
-            alert('請輸入完整 SCr 數值，或輸入完整尿量資料以進行計算。');
-            return;
-        }
-
-        let scrStage = 0;
-        let uoStage = 0;
-
-        // --- SCr 計算邏輯 ---
-        if (hasScrInput) {
-            if (baseScr <= 0 || currScr <= 0) {
-                alert('SCr 數值必須大於 0'); return;
-            }
-
-            const ratio = currScr / baseScr;
-            const increase = currScr - baseScr;
-            const scrInfo = `Base: ${baseScr} → Curr: ${currScr} (x${ratio.toFixed(2)})`;
-
-            if (increase <= 0) {
-                scrStage = 0;
-                reasons.push(`<div class="detail-item">🟢 SCr: 未上升 (${scrInfo})</div>`);
-            } else {
-                if (!is48h && !is7d) {
-                     reasons.push(`<div class="detail-item">⚪ SCr: 數值上升但未符合時間窗 (No AKI)</div>`);
-                } else {
-                    if ( (ratio >= 3.0 && is7d) || 
-                         (currScr >= 4.0 && increase >= 0.3 && (is48h || is7d)) ) {
-                        scrStage = 3;
-                    }
-                    else if (ratio >= 2.0 && is7d) {
-                        scrStage = 2;
-                    }
-                    else if ( (ratio >= 1.5 && is7d) || (increase >= 0.3 && is48h) ) {
-                        scrStage = 1;
-                    }
-
-                    const colorIcon = scrStage === 3 ? '🔴' : (scrStage === 2 ? '🟠' : (scrStage === 1 ? '🟡' : '🟢'));
-                    const stageText = scrStage > 0 ? `Stage ${scrStage}` : 'No AKI';
-                    reasons.push(`<div class="detail-item">${colorIcon} SCr: ${stageText} <span style="color:#888; font-size:0.8em">(${scrInfo})</span></div>`);
-                }
-            }
-        }
-
-        // --- UO 計算邏輯 ---
-        if (hasUOInput) {
-            if (weight <= 0 || uTime <= 0 || uVol < 0) {
-                alert('體重與時間必須大於 0，尿量不可為負值'); return;
-            }
-            
-            const uoRate = uVol / weight / uTime;
-            uoRateDiv.innerText = `目前尿量速率: ${uoRate.toFixed(2)} mL/kg/h`;
-
-            if ( (uoRate < 0.3 && uTime >= 24) || (uVol < 10 && uTime >= 12) ) {
-                uoStage = 3;
-            }
-            else if (uoRate < 0.5 && uTime >= 12) {
-                uoStage = 2;
-            }
-            else if (uoRate < 0.5 && uTime >= 6) {
-                uoStage = 1;
-            }
-
-            const colorIcon = uoStage === 3 ? '🔴' : (uoStage === 2 ? '🟠' : (uoStage === 1 ? '🟡' : '🟢'));
-            const stageText = uoStage > 0 ? `Stage ${uoStage}` : 'No AKI';
-            reasons.push(`<div class="detail-item">${colorIcon} UO: ${stageText} <span style="color:#888; font-size:0.8em">(${uoRate.toFixed(2)} mL/kg/h for ${uTime}h)</span></div>`);
-        }
-
-        // 4. 綜合判定
-        const finalStage = Math.max(scrStage, uoStage);
-
-        resultDiv.style.display = 'block';
-        reasonText.innerHTML = reasons.join('');
-
-        if (finalStage === 0) {
-            badge.className = 'stage-badge bg-green';
-            badge.innerText = 'No AKI';
-            resultText.innerText = '未達到 KDIGO AKI 定義標準';
-            adviceText.innerText = '建議持續監測腎功能與尿量。若臨床懷疑，請確認是否符合時間窗定義 (48h/7d)。';
-        } else {
-            if (finalStage === 1) badge.className = 'stage-badge bg-yellow';
-            if (finalStage === 2) badge.className = 'stage-badge bg-orange';
-            if (finalStage === 3) badge.className = 'stage-badge bg-red';
-            
-            badge.innerText = `AKI Stage ${finalStage}`;
-            resultText.innerText = '符合 KDIGO 急性腎損傷定義';
-            
-            if (finalStage === 1) {
-                adviceText.innerText = '建議評估體液狀態，排除阻塞，停用腎毒性藥物，密切監測 SCr 與尿量。';
-            } else if (finalStage === 2) {
-                adviceText.innerText = '建議調整藥物劑量，評估是否需要進一步的液體管理或利尿劑測試，考慮會診腎臟科。';
-            } else if (finalStage === 3) {
-                adviceText.innerText = '病情危急。建議立即評估併發症 (高血鉀、酸中毒、體液過多)，考慮透析治療 (RRT) 之適應症。';
-            }
-        }
+        document.querySelectorAll('input[type="number"]').forEach(el => el.value = '');
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+        document.getElementById('isTimeframe').checked = true;
+        document.getElementById('biomarker').value = 'NotTested';
+        document.getElementById('resultBox').style.display = "none";
     }
 </script>
 
