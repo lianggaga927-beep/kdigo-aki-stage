@@ -370,4 +370,128 @@
             } else if (rate < 0.5 && hrs > 12) {
                 uStageInt = 2; uStage = "U2";
             } else if (rate < 0.5 && hrs >= 6 && hrs <= 12) {
-                uStage
+                uStageInt = 1; uStage = "U1";
+            }
+            uDesc = uStageInt > 0 ? `Rate: ${rate.toFixed(2)} ml/kg/h for ${hrs}h` : `正常 (Rate: ${rate.toFixed(2)} ml/kg/h)`;
+        }
+
+        // 3. B-Stage
+        let bStageStr = "";
+        let bDesc = "";
+        if (biomarker === "B1") {
+            bStageStr = "B1"; bDesc = "Positive (結構性損傷指標陽性)";
+        } else if (biomarker === "B0") {
+            bStageStr = "B0"; bDesc = "Negative (陰性)";
+        } else {
+            bDesc = "Not Evaluated (未檢測)";
+        }
+
+        // Output formatting
+        const cOutput = `[${cStage}] ${cDesc}`;
+        const uOutput = `[${uStage}] ${uDesc}`;
+        const bOutput = `[${bStageStr || 'N/A'}] ${bDesc}`;
+        
+        document.getElementById('res-c').innerHTML = `<strong>${cStage}</strong>: ${cDesc}`;
+        document.getElementById('res-u').innerHTML = `<strong>${uStage}</strong>: ${uDesc}`;
+        document.getElementById('res-b').innerHTML = `<strong>${bStageStr || '-'}</strong>: ${bDesc}`;
+
+        const badgeStr = `AKI Profile: ${cStage} | ${uStage} | ${bStageStr || 'B-N/A'}`;
+        const badge = document.getElementById('stageBadge');
+        badge.innerText = badgeStr;
+        
+        const isAki = cStageInt > 0 || uStageInt > 0 || biomarker === "B1";
+        if (!isAki) {
+            badge.style.borderColor = "#86efac"; badge.style.backgroundColor = "#f0fdf4";
+        } else {
+            badge.style.borderColor = "#fca5a5"; badge.style.backgroundColor = "#fef2f2";
+        }
+
+        // 4. Clinical Recommendations (KDIGO 2026 Logic)
+        const maxStage = Math.max(cStageInt, uStageInt);
+        const recList = document.getElementById('recList');
+        const recs = [];
+        
+        if (isAki) {
+            recs.push("停用所有潛在腎毒性藥物 (Discontinue nephrotoxic agents when possible)。");
+            recs.push("優化體液狀態與灌注壓 (Optimize volume status and perfusion pressure)。");
+        }
+
+        if (maxStage === 1 || (maxStage === 0 && biomarker === "B1")) {
+            recs.push("密集監測功能性與結構性生物標記 (Frequently monitor functional/structural biomarkers)。");
+            if (biomarker === "B1") recs.push("注意：僅出現生標陽性，提示已有次臨床損傷 (Subclinical AKI)，應提早介入。");
+        } else if (maxStage === 2) {
+            recs.push("全面檢視並調整藥物劑量 (Check for changes in drug dosing)。");
+            recs.push("進行深入診斷檢查，評估非血流動力學之病因 (Diagnostic workup as appropriate)。");
+        } else if (maxStage === 3) {
+            recs.push("考慮進階血流動力學監測 (Consider advanced hemodynamic monitoring)。");
+            recs.push("針對持續性 AKI 或臨床試驗適應症，評估啟動 RRT (Consider RRT for persistent AKI)。");
+        }
+
+        if (!isAki) {
+            recs.push("目前無 AKI 指徵，維持常規臨床監測。");
+        }
+        
+        recList.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
+
+        // 5. Limitations & Warnings
+        const warnings = [];
+        if (document.getElementById('conf_diuretic').checked) warnings.push("利尿劑干擾：可能導致尿量增加，造成 U-Stage 偽陰性。");
+        if (document.getElementById('conf_muscle').checked) warnings.push("肌肉量/肝功能：Baseline SCr 可能被低估，導致 C-Stage 診斷延遲。");
+        if (document.getElementById('conf_meds').checked) warnings.push("藥物血流動力效應：RASi/SGLT2i 引起的 SCr 上升未必代表實質損傷。");
+        if (document.getElementById('conf_preg').checked) warnings.push("孕期生理變化：GFR 上升可能掩蓋早期的 SCr 異常。");
+
+        const warningBox = document.getElementById('warningBox');
+        if (warnings.length > 0) {
+            warningBox.style.display = "block";
+            document.getElementById('warningList').innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+        } else {
+            warningBox.style.display = "none";
+        }
+
+        // Store data for copy
+        copyTextData = `[KDIGO 2026 AKI Assessment]\n` +
+                       `Result: ${badgeStr}\n` +
+                       `---------------------------\n` +
+                       `• C-Stage: ${cOutput}\n` +
+                       `• U-Stage: ${uOutput}\n` +
+                       `• B-Stage: ${bOutput}\n` +
+                       `---------------------------\n` +
+                       `[Recommendations]\n` + recs.map(r => `- ${r}`).join('\n') +
+                       (warnings.length > 0 ? `\n\n[Clinical Limitations]\n` + warnings.map(w => `- ${w}`).join('\n') : "");
+
+        document.getElementById('resultBox').style.display = "block";
+    }
+
+    function resetForm() {
+        document.querySelectorAll('input[type="number"]').forEach(el => el.value = '');
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+        document.getElementById('isTimeframe').checked = true;
+        document.getElementById('biomarker').value = 'NotTested';
+        document.getElementById('resultBox').style.display = "none";
+        copyTextData = "";
+    }
+
+    function copyResults() {
+        if (!copyTextData) return;
+        navigator.clipboard.writeText(copyTextData).then(() => {
+            const btn = document.querySelector('.btn-copy');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7"></path></svg> 複製成功 (Copied!)`;
+            btn.style.backgroundColor = "#dcfce7";
+            btn.style.color = "#166534";
+            btn.style.borderColor = "#86efac";
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = "";
+                btn.style.color = "";
+                btn.style.borderColor = "";
+            }, 2000);
+        }).catch(err => {
+            console.error('Copy failed: ', err);
+            alert("瀏覽器不支援自動複製，請手動圈選複製。");
+        });
+    }
+</script>
+
+</body>
+</html>
