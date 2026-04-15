@@ -1,5 +1,7 @@
 # KDIGO 2026 AKI Staging Calculator
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue?style=for-the-badge)](https://lianggaga927-beep.github.io/kdigo-aki-stage)
+
 ## 1. 系統結論與定位
 本專案實作 KDIGO 2026 臨床實踐指引草案（Clinical Practice Guideline for AKI and AKD, March 2026 Public Review Draft）之急性腎損傷（AKI）分期演算法。核心目標為將傳統單一最高級別分期，轉換為精準醫療導向的 **C-U-B（Creatinine, Urine, Biomarker）多維度獨立分期系統**。
 
