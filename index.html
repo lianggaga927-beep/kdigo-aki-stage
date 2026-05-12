@@ -373,6 +373,34 @@
         .nephrotox-actions ul { margin: 0; padding-left: 1.2rem; color: #4c1d95; }
         .nephrotox-actions li { margin-bottom: 0.4rem; }
 
+        /* ── Post-AKI Follow-up Section ── */
+        .postaki-box {
+            border: 1px solid #a7f3d0;
+            border-top: 4px solid #059669;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #ecfdf5;
+        }
+        .postaki-box h4 { margin: 0 0 0.6rem 0; color: #065f46; font-size: 0.9rem; }
+        .kamps-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 0.6rem; }
+        .kamps-table td { padding: 0.35rem 0.5rem; border-bottom: 1px solid #a7f3d0; vertical-align: top; }
+        .kamps-letter { font-weight: 900; color: #059669; font-size: 1rem; width: 1.2rem; text-align: center; white-space: nowrap; }
+        .postaki-timeline {
+            background: #d1fae5;
+            border-radius: 4px;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.8rem;
+            color: #065f46;
+            margin-bottom: 0.6rem;
+            line-height: 1.6;
+        }
+        .restart-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 0.5rem; }
+        .restart-table th, .restart-table td { border: 1px solid #6ee7b7; padding: 0.4rem 0.5rem; vertical-align: top; }
+        .restart-table th { background: #d1fae5; color: #065f46; font-weight: 700; }
+        .restart-table tr:nth-child(even) td { background: #f0fdf4; }
+        .postaki-note { font-size: 0.75rem; color: #047857; margin-top: 0.4rem; line-height: 1.5; }
+
         /* Disclaimer Section */
         .disclaimer {
             margin-top: 2rem;
@@ -518,6 +546,49 @@
             <div id="nephrotoxActions" class="nephrotox-actions" style="display:none;">
                 <h5>建議操作：</h5>
                 <ul id="nephrotoxActionList"></ul>
+            </div>
+        </div>
+
+        <!-- Post-AKI Follow-up Box -->
+        <div id="postakiBox" class="postaki-box" style="display:none;">
+            <h4>&#128203; Post-AKI 追蹤計畫（KAMPS，KDIGO 2026 Chapter 6）</h4>
+            <table class="kamps-table">
+                <tr><td class="kamps-letter">K</td><td><strong>Kidney function</strong> — 定期監測 SCr、Cystatin C、UACR（白蛋白尿）</td></tr>
+                <tr><td class="kamps-letter">A</td><td><strong>Advocacy</strong> — 腎臟健康教育：AKI 定義、長期 CKD 風險、自我照護策略</td></tr>
+                <tr><td class="kamps-letter">M</td><td><strong>Medications</strong> — 藥師主導 Medication reconciliation；審視停藥原因 + 記錄重啟計畫</td></tr>
+                <tr><td class="kamps-letter">P</td><td><strong>Pressure</strong> — 血壓評估與控制（依適應症達指引目標）</td></tr>
+                <tr><td class="kamps-letter">S</td><td><strong>Sick day protocol</strong> — 衛教患者辨識急性病症狀並自我暫停 SADMANS 藥物</td></tr>
+            </table>
+            <div class="postaki-timeline">
+                &#9201; <strong>追蹤時間點（PP 6.2.2 / PP 6.3.1）</strong><br>
+                &#9655; <strong>出院前</strong>：藥物重啟評估 + 停藥原因記錄於出院摘要（PP 6.1.2）<br>
+                &#9655; <strong>AKI 後 3 個月</strong>：腎功能評估（SCr / Cystatin C / UACR）+ CKD 風險分層 + 確認重啟計畫執行（Rec 6.1.1，1B）
+            </div>
+            <table class="restart-table">
+                <tr><th>藥物（AKI 期間暫停）</th><th>重啟最低條件</th></tr>
+                <tr>
+                    <td>RASi（ACEi / ARB）<br><span style="color:#059669;font-size:0.72rem;">Rec 6.2.1，1B — 死亡率 HR 0.83</span></td>
+                    <td>腎功能穩定 + K⁺ &lt; 5.5 mmol/L</td>
+                </tr>
+                <tr>
+                    <td>MRA（Spironolactone / Finerenone）<br><span style="color:#059669;font-size:0.72rem;">PP 6.2.1</span></td>
+                    <td>eGFR &gt; 25 + K⁺ 正常 + 有臨床適應症</td>
+                </tr>
+                <tr>
+                    <td>SGLT2i<br><span style="color:#059669;font-size:0.72rem;">PP 6.2.1</span></td>
+                    <td>eGFR 符合各藥適應症門檻 + 腎功能穩定</td>
+                </tr>
+                <tr>
+                    <td>GLP-1 RA<br><span style="color:#059669;font-size:0.72rem;">PP 6.2.1</span></td>
+                    <td>GI 耐受 + 腎功能穩定</td>
+                </tr>
+                <tr>
+                    <td>Diuretics / 降壓藥<br><span style="color:#059669;font-size:0.72rem;">PP 6.2.1</span></td>
+                    <td>有臨床需求時（血壓控制、容量管理）</td>
+                </tr>
+            </table>
+            <div class="postaki-note">
+                &#128270; <strong>CKD 風險分層</strong>（Rec 6.1.2，2D）：使用 James et al. 6 變數預測模型（年齡、性別、基礎 SCr、白蛋白尿、AKI 嚴重度、出院 SCr，C-statistic 0.81）。高風險 → 腎臟科追蹤；低風險 → 初級照護 + 定期監測。
             </div>
         </div>
 
@@ -900,10 +971,13 @@
             nephrotoxBox.style.display = 'block';
             buildNephrotoxGrid();
             document.getElementById('nephrotoxActions').style.display = 'none';
+
+            document.getElementById('postakiBox').style.display = 'block';
         } else {
             sadmansBox.style.display = 'none';
             tdmBox.style.display = 'none';
             nephrotoxBox.style.display = 'none';
+            document.getElementById('postakiBox').style.display = 'none';
         }
 
         // 7. Build copy text
@@ -952,12 +1026,23 @@
         document.getElementById('sadmansBox').style.display = "none";
         document.getElementById('tdmBox').style.display = "none";
         document.getElementById('nephrotoxBox').style.display = "none";
+        document.getElementById('postakiBox').style.display = "none";
         copyTextData = "";
     }
 
     function copyResults() {
         if (!copyTextData) return;
-        const fullText = copyTextData + getSadmansCopyText() + getTdmCopyText() + getNephrotoxCopyText();
+        const postaкiVisible = document.getElementById('postakiBox').style.display !== 'none';
+        const postakiText = postaкiVisible
+            ? `\n\n[Post-AKI 追蹤計畫 — KAMPS]\n` +
+              `- K: 監測 SCr / Cystatin C / UACR\n` +
+              `- A: 腎臟健康教育（AKI 定義、CKD 風險）\n` +
+              `- M: Medication reconciliation（藥師執行）\n` +
+              `- P: 血壓評估與控制\n` +
+              `- S: 衛教 Sick day protocol（SADMANS）\n` +
+              `追蹤時間點：出院前（藥物重啟評估）、AKI 後 3 個月（腎功能 + CKD 分層）`
+            : '';
+        const fullText = copyTextData + getSadmansCopyText() + getTdmCopyText() + getNephrotoxCopyText() + postakiText;
         navigator.clipboard.writeText(fullText).then(() => {
             const btn = document.querySelector('.btn-copy');
             const originalText = btn.innerHTML;
