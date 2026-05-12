@@ -12,7 +12,7 @@
             --text-color: #1e293b;
             --border-radius: 8px;
             --border-color: #e2e8f0;
-            
+
             /* Theme Colors */
             --c-color: #3b82f6; /* Blue */
             --c-bg: #eff6ff;
@@ -62,7 +62,7 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .section-c { border-top: 4px solid var(--c-color); background-color: var(--c-bg); }
         .section-u { border-top: 4px solid var(--u-color); background-color: var(--u-bg); }
         .section-b { border-top: 4px solid var(--b-color); background-color: var(--b-bg); }
@@ -87,7 +87,7 @@
             gap: 1rem;
             margin-bottom: 0.75rem;
         }
-        
+
         .form-group.full-width { grid-template-columns: 1fr; }
 
         label {
@@ -184,15 +184,15 @@
             margin-bottom: 1rem;
             font-size: 0.85rem;
         }
-        
+
         .detail-table th, .detail-table td {
             border: 1px solid #e2e8f0;
             padding: 0.6rem;
             text-align: left;
         }
-        
+
         .detail-table th { width: 25%; }
-        
+
         /* Row Colors */
         .row-c th { background-color: var(--c-bg); color: var(--c-color); border-left: 4px solid var(--c-color); }
         .row-u th { background-color: var(--u-bg); color: var(--u-color); border-left: 4px solid var(--u-color); }
@@ -206,7 +206,7 @@
             font-size: 0.85rem;
             color: #115e59;
         }
-        
+
         .recommendation-box h4 { margin: 0 0 0.5rem 0; color: #0f766e; }
         .recommendation-box ul { margin: 0; padding-left: 1.2rem; }
 
@@ -216,9 +216,97 @@
             border-left: 4px solid #f59e0b;
             font-size: 0.8rem;
             color: #92400e;
+            margin-bottom: 1rem;
         }
         .warning-box h4 { margin: 0 0 0.25rem 0; }
         .warning-box ul { margin: 0; padding-left: 1.2rem; }
+
+        /* ── SADMANS Section ── */
+        .sadmans-box {
+            border: 1px solid #fecaca;
+            border-top: 4px solid #ef4444;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #fff5f5;
+        }
+        .sadmans-box h4 {
+            margin: 0 0 0.2rem 0;
+            color: #b91c1c;
+            font-size: 0.9rem;
+        }
+        .sadmans-subtitle {
+            font-size: 0.78rem;
+            color: #9f1239;
+            margin-bottom: 0.75rem;
+        }
+        .sadmans-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            margin-bottom: 0.75rem;
+        }
+        .sadmans-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: #1e293b;
+            padding: 0.4rem 0.5rem;
+            background: #fff;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .sadmans-item:hover { background: #fef2f2; }
+        .sadmans-item input[type="checkbox"] {
+            margin-top: 0.15rem;
+            flex-shrink: 0;
+            accent-color: #ef4444;
+            cursor: pointer;
+        }
+        .sadmans-badge {
+            display: inline-block;
+            font-weight: 800;
+            color: #ef4444;
+            font-size: 0.88rem;
+            min-width: 0.9rem;
+        }
+        .sadmans-actions {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-size: 0.82rem;
+            margin-bottom: 0.5rem;
+        }
+        .sadmans-actions h5 {
+            margin: 0 0 0.5rem 0;
+            color: #991b1b;
+            font-size: 0.82rem;
+        }
+        .sadmans-actions ul { margin: 0; padding-left: 1.2rem; color: #7f1d1d; }
+        .sadmans-actions li { margin-bottom: 0.35rem; }
+        .triple-whammy-box {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-left: 4px solid #d97706;
+            border-radius: 4px;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.82rem;
+            color: #78350f;
+            margin-bottom: 0.5rem;
+        }
+        .sadmans-restart {
+            background: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.78rem;
+            color: #92400e;
+            border-radius: 0 4px 4px 0;
+            margin-top: 0.5rem;
+        }
 
         /* Disclaimer Section */
         .disclaimer {
@@ -312,7 +400,7 @@
     <!-- Result Box -->
     <div id="resultBox" class="result-box">
         <div id="stageBadge" class="stage-badge"></div>
-        
+
         <table class="detail-table">
             <tr class="row-c"><th>C-Stage</th><td id="res-c"></td></tr>
             <tr class="row-u"><th>U-Stage</th><td id="res-u"></td></tr>
@@ -327,6 +415,23 @@
         <div id="warningBox" class="warning-box" style="display: none;">
             <h4>判讀限制與干擾 (Confounders):</h4>
             <ul id="warningList"></ul>
+        </div>
+
+        <!-- SADMANS Box -->
+        <div id="sadmansBox" class="sadmans-box" style="display:none;">
+            <h4>&#9888; SADMANS 急性停藥審視 <span style="font-weight:400;font-size:0.78rem;">（Sick Day Protocol, KDIGO 2026 Rec 4.11.1）</span></h4>
+            <div class="sadmans-subtitle">AKI 確認 — 請勾選病人目前開立中的藥物，產生個別化停藥建議：</div>
+            <div class="sadmans-grid" id="sadmansGrid"></div>
+            <div id="sadmansActions" class="sadmans-actions" style="display:none;">
+                <h5>建議審視停用 / 暫停的藥物：</h5>
+                <ul id="sadmansActionList"></ul>
+            </div>
+            <div id="tripleWhammy" class="triple-whammy-box" style="display:none;">
+                &#9889; <strong>Triple Whammy 警示：</strong>NSAIDs + 利尿劑 + RASi 三藥並用，腎損傷風險極高，請立即全數停用並評估 AKI 進展風險。
+            </div>
+            <div class="sadmans-restart">
+                &#128203; <strong>停藥後必須記錄重啟計畫：</strong>Metformin、ACEi/ARB、SGLT2i 因未按時重啟造成的長期損害不亞於 AKI 本身（KDIGO 2026 PP 4.3.1）。
+            </div>
         </div>
 
         <button class="btn-copy" onclick="copyResults()">
@@ -344,19 +449,116 @@
 </div>
 
 <script>
-    // Global variable to store raw text for copying
     let copyTextData = "";
 
+    // ── SADMANS Drug Definitions ──
+    const SADMANS_DRUGS = [
+        {
+            id: 'sad_sulf', letter: 'S', name: 'Sulfonylureas',
+            examples: 'Glibenclamide, Glipizide, Gliclazide',
+            action: '停用 — 腎清除↓ → 低血糖風險↑（尤其長效型 Glibenclamide）',
+            tags: []
+        },
+        {
+            id: 'sad_acei', letter: 'A', name: 'ACEi',
+            examples: 'Enalapril, Ramipril, Perindopril',
+            action: '暫停 — efferent 擴張 → GFR 進一步↓、高血鉀；腎功能與電解質穩定後重啟（KDIGO 2026 Rec 6.2.1, 1B）',
+            tags: ['rasi']
+        },
+        {
+            id: 'sad_diur', letter: 'D', name: 'Diuretics',
+            examples: 'Furosemide, Thiazide, Spironolactone',
+            action: '停用 — 加劇有效循環容量不足 → 腎低灌流惡化',
+            tags: ['diur']
+        },
+        {
+            id: 'sad_metf', letter: 'M', name: 'Metformin',
+            examples: 'Metformin (Glucophage)',
+            action: '停用 — 腎清除↓ → 乳酸酸中毒風險；停至腎功能穩定後 ≥48h 確認再重啟',
+            tags: []
+        },
+        {
+            id: 'sad_arb', letter: 'A', name: 'ARBs',
+            examples: 'Losartan, Valsartan, Telmisartan, Irbesartan',
+            action: '暫停 — 同 ACEi，efferent 擴張 → GFR 進一步↓；穩定後重啟（1B）',
+            tags: ['rasi']
+        },
+        {
+            id: 'sad_nsai', letter: 'N', name: 'NSAIDs',
+            examples: 'Ibuprofen, Diclofenac, Ketorolac, Naproxen',
+            action: '停用 — 前列腺素抑制 → afferent 收縮 + 直接腎毒性（COX 抑制）',
+            tags: ['nsaid']
+        },
+        {
+            id: 'sad_sglt', letter: 'S', name: 'SGLT2 Inhibitors',
+            examples: 'Dapagliflozin, Empagliflozin, Canagliflozin',
+            action: '停用 — 急性病期間 Ketosis 風險↑；停至腎功能穩定後重新評估是否重啟',
+            tags: []
+        },
+        {
+            id: 'sad_dri', letter: '+', name: 'Direct Renin Inhibitor',
+            examples: 'Aliskiren',
+            action: '暫停 — 同 RASi 機制，腎素抑制 → efferent 擴張 → GFR 下降',
+            tags: ['rasi']
+        },
+        {
+            id: 'sad_arni', letter: '+', name: 'ARNi',
+            examples: 'Sacubitril/Valsartan (Entresto)',
+            action: '暫停 — 含 ARB 成份；心衰患者停藥前需與主治醫師確認，避免心衰惡化',
+            tags: ['rasi']
+        },
+    ];
+
+    function buildSadmansGrid() {
+        const grid = document.getElementById('sadmansGrid');
+        grid.innerHTML = SADMANS_DRUGS.map(drug => `
+            <label class="sadmans-item" for="${drug.id}">
+                <input type="checkbox" id="${drug.id}" onchange="updateSadmansActions()">
+                <span>
+                    <span class="sadmans-badge">${drug.letter}</span><strong>${drug.name}</strong><br>
+                    <span style="color:#64748b;font-size:0.75rem;">${drug.examples}</span>
+                </span>
+            </label>
+        `).join('');
+    }
+
+    function updateSadmansActions() {
+        const checked = SADMANS_DRUGS.filter(d => {
+            const el = document.getElementById(d.id);
+            return el && el.checked;
+        });
+
+        const actionsEl  = document.getElementById('sadmansActions');
+        const twEl       = document.getElementById('tripleWhammy');
+
+        if (checked.length === 0) {
+            actionsEl.style.display = 'none';
+            twEl.style.display = 'none';
+            return;
+        }
+
+        // Triple Whammy detection
+        const hasNsaid = checked.some(d => d.tags.includes('nsaid'));
+        const hasDiur  = checked.some(d => d.tags.includes('diur'));
+        const hasRasi  = checked.some(d => d.tags.includes('rasi'));
+        twEl.style.display = (hasNsaid && hasDiur && hasRasi) ? 'block' : 'none';
+
+        actionsEl.style.display = 'block';
+        document.getElementById('sadmansActionList').innerHTML = checked.map(d =>
+            `<li><strong>[${d.letter}] ${d.name}</strong>：${d.action}</li>`
+        ).join('');
+    }
+
+    // ── Main Calculator ──
     function calculateAKI() {
-        // Fix 3: input validation before parsing
         const baseScrVal = document.getElementById('baseScr').value.trim();
         const currScrVal = document.getElementById('currScr').value.trim();
-        const wtVal = document.getElementById('weight').value.trim();
+        const wtVal  = document.getElementById('weight').value.trim();
         const volVal = document.getElementById('uVol').value.trim();
         const hrsVal = document.getElementById('uTime').value.trim();
-        const isRRT = document.getElementById('isRRT').checked;
-        const is48h = document.getElementById('is48h').checked;
-        const is7d = document.getElementById('is7d').checked;
+        const isRRT  = document.getElementById('isRRT').checked;
+        const is48h  = document.getElementById('is48h').checked;
+        const is7d   = document.getElementById('is7d').checked;
 
         const uFieldsFilled = [wtVal, volVal, hrsVal].filter(v => v !== '').length;
 
@@ -379,25 +581,22 @@
 
         const bScr = parseFloat(baseScrVal);
         const cScr = parseFloat(currScrVal);
-        const wt = parseFloat(wtVal);
-        const vol = parseFloat(volVal);
-        const hrs = parseFloat(hrsVal);
+        const wt   = parseFloat(wtVal);
+        const vol  = parseFloat(volVal);
+        const hrs  = parseFloat(hrsVal);
         const biomarker = document.getElementById('biomarker').value;
 
-        // 1. C-Stage (Fix 1: SCr ≥ 4.0 needs diff ≥ 0.3; Fix 2: split 48h / 7d windows)
-        let cStageInt = 0;
-        let cStage = "C0";
-        let cDesc = "未達標";
+        // 1. C-Stage
+        let cStageInt = 0, cStage = "C0", cDesc = "未達標";
 
         if (isRRT) {
             cStageInt = 3; cStage = "C3"; cDesc = "Initiation of RRT";
         } else if (!isNaN(bScr) && !isNaN(cScr) && bScr > 0) {
             const ratio = cScr / bScr;
-            const diff = cScr - bScr;
+            const diff  = cScr - bScr;
             if (is48h || is7d) {
                 const c3ByRatio = ratio >= 3.0 && is7d;
-                // Fix 1: cScr >= 4.0 requires documented acute rise >= 0.3
-                const c3ByAbs  = cScr >= 4.0 && diff >= 0.3 && (is48h || is7d);
+                const c3ByAbs   = cScr >= 4.0 && diff >= 0.3 && (is48h || is7d);
                 if (c3ByRatio || c3ByAbs) {
                     cStageInt = 3; cStage = "C3";
                     cDesc = c3ByRatio
@@ -418,10 +617,8 @@
             }
         }
 
-        // 2. U-Stage (Fix 4: replace vol === 0 with rate < 0.1 for anuria)
-        let uStageInt = 0;
-        let uStage = "U0";
-        let uDesc = "未達標 / 資料不完整";
+        // 2. U-Stage
+        let uStageInt = 0, uStage = "U0", uDesc = "未達標 / 資料不完整";
 
         if (!isNaN(wt) && !isNaN(vol) && !isNaN(hrs) && wt > 0 && hrs > 0) {
             const rate = vol / wt / hrs;
@@ -429,7 +626,6 @@
                 uStageInt = 3; uStage = "U3";
                 uDesc = `Rate: ${rate.toFixed(2)} mL/kg/h for ${hrs}h (< 0.3 × ≥24h)`;
             } else if (rate < 0.1 && hrs > 12) {
-                // Fix 4: near-anuria (< 0.1 mL/kg/h) over > 12h → U3
                 uStageInt = 3; uStage = "U3";
                 uDesc = `Near-anuria (Rate: ${rate.toFixed(3)} mL/kg/h for ${hrs}h)`;
             } else if (rate < 0.5 && hrs > 12) {
@@ -444,8 +640,7 @@
         }
 
         // 3. B-Stage
-        let bStageStr = "";
-        let bDesc = "";
+        let bStageStr = "", bDesc = "";
         if (biomarker === "B1") {
             bStageStr = "B1"; bDesc = "Positive (結構性損傷指標陽性)";
         } else if (biomarker === "B0") {
@@ -454,11 +649,6 @@
             bDesc = "Not Evaluated (未檢測)";
         }
 
-        // Output formatting
-        const cOutput = `[${cStage}] ${cDesc}`;
-        const uOutput = `[${uStage}] ${uDesc}`;
-        const bOutput = `[${bStageStr || 'N/A'}] ${bDesc}`;
-        
         document.getElementById('res-c').innerHTML = `<strong>${cStage}</strong>: ${cDesc}`;
         document.getElementById('res-u').innerHTML = `<strong>${uStage}</strong>: ${uDesc}`;
         document.getElementById('res-b').innerHTML = `<strong>${bStageStr || '-'}</strong>: ${bDesc}`;
@@ -466,24 +656,18 @@
         const badgeStr = `AKI Profile: ${cStage} | ${uStage} | ${bStageStr || 'B-N/A'}`;
         const badge = document.getElementById('stageBadge');
         badge.innerText = badgeStr;
-        
-        const isAki = cStageInt > 0 || uStageInt > 0 || biomarker === "B1";
-        if (!isAki) {
-            badge.style.borderColor = "#86efac"; badge.style.backgroundColor = "#f0fdf4";
-        } else {
-            badge.style.borderColor = "#fca5a5"; badge.style.backgroundColor = "#fef2f2";
-        }
 
-        // 4. Clinical Recommendations (KDIGO 2026 Logic)
+        const isAki = cStageInt > 0 || uStageInt > 0 || biomarker === "B1";
+        badge.style.borderColor     = isAki ? "#fca5a5" : "#86efac";
+        badge.style.backgroundColor = isAki ? "#fef2f2" : "#f0fdf4";
+
+        // 4. Clinical Recommendations
         const maxStage = Math.max(cStageInt, uStageInt);
-        const recList = document.getElementById('recList');
         const recs = [];
-        
         if (isAki) {
-            recs.push("停用所有潛在腎毒性藥物 (Discontinue nephrotoxic agents when possible)。");
+            recs.push("停用所有潛在腎毒性藥物（詳見下方 SADMANS 清單）。");
             recs.push("優化體液狀態與灌注壓 (Optimize volume status and perfusion pressure)。");
         }
-
         if (maxStage === 1 || (maxStage === 0 && biomarker === "B1")) {
             recs.push("密集監測功能性與結構性生物標記 (Frequently monitor functional/structural biomarkers)。");
             if (biomarker === "B1") recs.push("注意：僅出現生標陽性，提示已有次臨床損傷 (Subclinical AKI)，應提早介入。");
@@ -494,40 +678,68 @@
             recs.push("考慮進階血流動力學監測 (Consider advanced hemodynamic monitoring)。");
             recs.push("針對持續性 AKI 或臨床試驗適應症，評估啟動 RRT (Consider RRT for persistent AKI)。");
         }
+        if (!isAki) recs.push("目前無 AKI 指徵，維持常規臨床監測。");
+        document.getElementById('recList').innerHTML = recs.map(r => `<li>${r}</li>`).join('');
 
-        if (!isAki) {
-            recs.push("目前無 AKI 指徵，維持常規臨床監測。");
-        }
-        
-        recList.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
-
-        // 5. Limitations & Warnings
+        // 5. Confounders
         const warnings = [];
         if (document.getElementById('conf_diuretic').checked) warnings.push("利尿劑干擾：可能導致尿量增加，造成 U-Stage 偽陰性。");
-        if (document.getElementById('conf_muscle').checked) warnings.push("肌肉量/肝功能：Baseline SCr 可能被低估，導致 C-Stage 診斷延遲。");
-        if (document.getElementById('conf_meds').checked) warnings.push("藥物血流動力效應：RASi/SGLT2i 引起的 SCr 上升未必代表實質損傷。");
-        if (document.getElementById('conf_preg').checked) warnings.push("孕期生理變化：GFR 上升可能掩蓋早期的 SCr 異常。");
-
+        if (document.getElementById('conf_muscle').checked)   warnings.push("肌肉量/肝功能：Baseline SCr 可能被低估，導致 C-Stage 診斷延遲。");
+        if (document.getElementById('conf_meds').checked)     warnings.push("藥物血流動力效應：RASi/SGLT2i 引起的 SCr 上升未必代表實質損傷。");
+        if (document.getElementById('conf_preg').checked)     warnings.push("孕期生理變化：GFR 上升可能掩蓋早期的 SCr 異常。");
         const warningBox = document.getElementById('warningBox');
-        if (warnings.length > 0) {
-            warningBox.style.display = "block";
+        warningBox.style.display = warnings.length > 0 ? "block" : "none";
+        if (warnings.length > 0)
             document.getElementById('warningList').innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+
+        // 6. SADMANS — show only when AKI confirmed
+        const sadmansBox = document.getElementById('sadmansBox');
+        if (isAki) {
+            sadmansBox.style.display = 'block';
+            buildSadmansGrid();
+            // Reset action panel (user may re-check drugs for this new result)
+            document.getElementById('sadmansActions').style.display = 'none';
+            document.getElementById('tripleWhammy').style.display   = 'none';
         } else {
-            warningBox.style.display = "none";
+            sadmansBox.style.display = 'none';
         }
 
-        // Store data for copy
-        copyTextData = `[KDIGO 2026 AKI Assessment]\n` +
-                       `Result: ${badgeStr}\n` +
-                       `---------------------------\n` +
-                       `• C-Stage: ${cOutput}\n` +
-                       `• U-Stage: ${uOutput}\n` +
-                       `• B-Stage: ${bOutput}\n` +
-                       `---------------------------\n` +
-                       `[Recommendations]\n` + recs.map(r => `- ${r}`).join('\n') +
-                       (warnings.length > 0 ? `\n\n[Clinical Limitations]\n` + warnings.map(w => `- ${w}`).join('\n') : "");
+        // 7. Build copy text
+        const cOutput = `[${cStage}] ${cDesc}`;
+        const uOutput = `[${uStage}] ${uDesc}`;
+        const bOutput = `[${bStageStr || 'N/A'}] ${bDesc}`;
+        copyTextData =
+            `[KDIGO 2026 AKI Assessment]\n` +
+            `Result: ${badgeStr}\n` +
+            `---------------------------\n` +
+            `• C-Stage: ${cOutput}\n` +
+            `• U-Stage: ${uOutput}\n` +
+            `• B-Stage: ${bOutput}\n` +
+            `---------------------------\n` +
+            `[Recommendations]\n` + recs.map(r => `- ${r}`).join('\n') +
+            (warnings.length > 0
+                ? `\n\n[Clinical Limitations]\n` + warnings.map(w => `- ${w}`).join('\n')
+                : '');
 
         document.getElementById('resultBox').style.display = "block";
+    }
+
+    function getSadmansCopyText() {
+        const checked = SADMANS_DRUGS.filter(d => {
+            const el = document.getElementById(d.id);
+            return el && el.checked;
+        });
+        if (checked.length === 0) return '';
+        const hasNsaid = checked.some(d => d.tags.includes('nsaid'));
+        const hasDiur  = checked.some(d => d.tags.includes('diur'));
+        const hasRasi  = checked.some(d => d.tags.includes('rasi'));
+        const tw = (hasNsaid && hasDiur && hasRasi)
+            ? '\n⚡ Triple Whammy 警示：NSAIDs + 利尿劑 + RASi 三藥並用，請立即全數停用。'
+            : '';
+        return `\n\n[SADMANS 停藥審視]\n` +
+            checked.map(d => `- [${d.letter}] ${d.name}：${d.action}`).join('\n') +
+            tw +
+            `\n📋 提醒：停藥後請在病歷記錄重啟計畫。`;
     }
 
     function resetForm() {
@@ -535,12 +747,14 @@
         document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
         document.getElementById('biomarker').value = 'NotTested';
         document.getElementById('resultBox').style.display = "none";
+        document.getElementById('sadmansBox').style.display = "none";
         copyTextData = "";
     }
 
     function copyResults() {
         if (!copyTextData) return;
-        navigator.clipboard.writeText(copyTextData).then(() => {
+        const fullText = copyTextData + getSadmansCopyText();
+        navigator.clipboard.writeText(fullText).then(() => {
             const btn = document.querySelector('.btn-copy');
             const originalText = btn.innerHTML;
             btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7"></path></svg> 複製成功 (Copied!)`;
@@ -553,8 +767,7 @@
                 btn.style.color = "";
                 btn.style.borderColor = "";
             }, 2000);
-        }).catch(err => {
-            console.error('Copy failed: ', err);
+        }).catch(() => {
             alert("瀏覽器不支援自動複製，請手動圈選複製。");
         });
     }
