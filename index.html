@@ -256,8 +256,12 @@
             <label for="isRRT">已啟動腎臟替代治療 (Initiation of RRT)</label>
         </div>
         <div class="checkbox-item">
-            <input type="checkbox" id="isTimeframe" checked>
-            <label for="isTimeframe">符合定義窗 (48h 內 Δ≥0.3 或 7d 內 ≥1.5倍)</label>
+            <input type="checkbox" id="is48h">
+            <label for="is48h">48h 內 SCr 上升 ≥ 0.3 mg/dL（C1/C3 絕對值判定窗）</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="is7d">
+            <label for="is7d">7d 內 SCr ≥ 1.5 倍 baseline（C1–C3 倍率判定窗）</label>
         </div>
     </div>
 
@@ -344,53 +348,99 @@
     let copyTextData = "";
 
     function calculateAKI() {
-        const bScr = parseFloat(document.getElementById('baseScr').value);
-        const cScr = parseFloat(document.getElementById('currScr').value);
+        // Fix 3: input validation before parsing
+        const baseScrVal = document.getElementById('baseScr').value.trim();
+        const currScrVal = document.getElementById('currScr').value.trim();
+        const wtVal = document.getElementById('weight').value.trim();
+        const volVal = document.getElementById('uVol').value.trim();
+        const hrsVal = document.getElementById('uTime').value.trim();
         const isRRT = document.getElementById('isRRT').checked;
-        const isTimeframe = document.getElementById('isTimeframe').checked;
+        const is48h = document.getElementById('is48h').checked;
+        const is7d = document.getElementById('is7d').checked;
 
-        const wt = parseFloat(document.getElementById('weight').value);
-        const vol = parseFloat(document.getElementById('uVol').value);
-        const hrs = parseFloat(document.getElementById('uTime').value);
+        const uFieldsFilled = [wtVal, volVal, hrsVal].filter(v => v !== '').length;
 
+        if (!isRRT && baseScrVal === '' && currScrVal === '' && uFieldsFilled === 0) {
+            alert('請填入至少一項資料（SCr 或尿量），或勾選 RRT。');
+            return;
+        }
+        if (baseScrVal !== '' && currScrVal === '') {
+            alert('已填入 Baseline SCr，請同時填入 Current SCr。');
+            return;
+        }
+        if (currScrVal !== '' && baseScrVal === '') {
+            alert('已填入 Current SCr，請同時填入 Baseline SCr。');
+            return;
+        }
+        if (uFieldsFilled > 0 && uFieldsFilled < 3) {
+            alert('尿量分期需同時填入體重、尿量、收集時間三欄。');
+            return;
+        }
+
+        const bScr = parseFloat(baseScrVal);
+        const cScr = parseFloat(currScrVal);
+        const wt = parseFloat(wtVal);
+        const vol = parseFloat(volVal);
+        const hrs = parseFloat(hrsVal);
         const biomarker = document.getElementById('biomarker').value;
 
-        // 1. C-Stage
+        // 1. C-Stage (Fix 1: SCr ≥ 4.0 needs diff ≥ 0.3; Fix 2: split 48h / 7d windows)
         let cStageInt = 0;
         let cStage = "C0";
         let cDesc = "未達標";
-        
+
         if (isRRT) {
             cStageInt = 3; cStage = "C3"; cDesc = "Initiation of RRT";
-        } else if (!isNaN(bScr) && !isNaN(cScr) && bScr > 0 && isTimeframe) {
+        } else if (!isNaN(bScr) && !isNaN(cScr) && bScr > 0) {
             const ratio = cScr / bScr;
             const diff = cScr - bScr;
-            if (ratio >= 3.0 || cScr >= 4.0) {
-                cStageInt = 3; cStage = "C3"; cDesc = `≥3.0x baseline 或 SCr ≥4.0 (Ratio: ${ratio.toFixed(2)})`;
-            } else if (ratio >= 2.0 && ratio <= 2.99) {
-                cStageInt = 2; cStage = "C2"; cDesc = `2.0-2.9x baseline (Ratio: ${ratio.toFixed(2)})`;
-            } else if (ratio >= 1.5 || diff >= 0.3) {
-                cStageInt = 1; cStage = "C1"; cDesc = `≥0.3 mg/dL 增加 或 1.5-1.9x baseline`;
+            if (is48h || is7d) {
+                const c3ByRatio = ratio >= 3.0 && is7d;
+                // Fix 1: cScr >= 4.0 requires documented acute rise >= 0.3
+                const c3ByAbs  = cScr >= 4.0 && diff >= 0.3 && (is48h || is7d);
+                if (c3ByRatio || c3ByAbs) {
+                    cStageInt = 3; cStage = "C3";
+                    cDesc = c3ByRatio
+                        ? `≥3.0x baseline (Ratio: ${ratio.toFixed(2)}, 7d 窗)`
+                        : `SCr ≥4.0 mg/dL 伴急性上升 ≥0.3 mg/dL (Δ${diff.toFixed(2)})`;
+                } else if (ratio >= 2.0 && ratio < 3.0 && is7d) {
+                    cStageInt = 2; cStage = "C2";
+                    cDesc = `2.0–2.9x baseline (Ratio: ${ratio.toFixed(2)}, 7d 窗)`;
+                } else if ((ratio >= 1.5 && ratio < 2.0 && is7d) || (diff >= 0.3 && is48h)) {
+                    cStageInt = 1; cStage = "C1";
+                    const reasons = [];
+                    if (diff >= 0.3 && is48h) reasons.push(`Δ${diff.toFixed(2)} mg/dL within 48h`);
+                    if (ratio >= 1.5 && ratio < 2.0 && is7d) reasons.push(`${ratio.toFixed(2)}x baseline within 7d`);
+                    cDesc = reasons.join(' / ');
+                }
+            } else {
+                cDesc = "數值有輸入，但未勾選任何判定時間窗（48h / 7d）";
             }
-        } else if (!isTimeframe && !isNaN(bScr) && !isNaN(cScr)) {
-            cDesc = "數值上升但未符合 48h/7d 時間窗";
         }
 
-        // 2. U-Stage
+        // 2. U-Stage (Fix 4: replace vol === 0 with rate < 0.1 for anuria)
         let uStageInt = 0;
         let uStage = "U0";
         let uDesc = "未達標 / 資料不完整";
-        
+
         if (!isNaN(wt) && !isNaN(vol) && !isNaN(hrs) && wt > 0 && hrs > 0) {
             const rate = vol / wt / hrs;
-            if ((rate < 0.3 && hrs >= 24) || (vol === 0 && hrs > 12)) {
+            if (rate < 0.3 && hrs >= 24) {
                 uStageInt = 3; uStage = "U3";
+                uDesc = `Rate: ${rate.toFixed(2)} mL/kg/h for ${hrs}h (< 0.3 × ≥24h)`;
+            } else if (rate < 0.1 && hrs > 12) {
+                // Fix 4: near-anuria (< 0.1 mL/kg/h) over > 12h → U3
+                uStageInt = 3; uStage = "U3";
+                uDesc = `Near-anuria (Rate: ${rate.toFixed(3)} mL/kg/h for ${hrs}h)`;
             } else if (rate < 0.5 && hrs > 12) {
                 uStageInt = 2; uStage = "U2";
+                uDesc = `Rate: ${rate.toFixed(2)} mL/kg/h for ${hrs}h`;
             } else if (rate < 0.5 && hrs >= 6 && hrs <= 12) {
                 uStageInt = 1; uStage = "U1";
+                uDesc = `Rate: ${rate.toFixed(2)} mL/kg/h for ${hrs}h`;
+            } else {
+                uDesc = `正常 (Rate: ${rate.toFixed(2)} mL/kg/h)`;
             }
-            uDesc = uStageInt > 0 ? `Rate: ${rate.toFixed(2)} ml/kg/h for ${hrs}h` : `正常 (Rate: ${rate.toFixed(2)} ml/kg/h)`;
         }
 
         // 3. B-Stage
@@ -483,7 +533,6 @@
     function resetForm() {
         document.querySelectorAll('input[type="number"]').forEach(el => el.value = '');
         document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-        document.getElementById('isTimeframe').checked = true;
         document.getElementById('biomarker').value = 'NotTested';
         document.getElementById('resultBox').style.display = "none";
         copyTextData = "";
