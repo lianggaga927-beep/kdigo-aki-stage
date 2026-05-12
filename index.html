@@ -308,6 +308,71 @@
             margin-top: 0.5rem;
         }
 
+        /* ── TDM Antibiotics Section ── */
+        .tdm-box {
+            border: 1px solid #fed7aa;
+            border-top: 4px solid #ea580c;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #fff7ed;
+        }
+        .tdm-box h4 { margin: 0 0 0.2rem 0; color: #9a3412; font-size: 0.9rem; }
+        .tdm-subtitle { font-size: 0.78rem; color: #c2410c; margin-bottom: 0.75rem; }
+        .tdm-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: #1e293b;
+            padding: 0.5rem 0.6rem;
+            background: #fff;
+            border: 1px solid #fed7aa;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 0.4rem;
+            user-select: none;
+        }
+        .tdm-item:hover { background: #fff7ed; }
+        .tdm-item input[type="checkbox"] { margin-top: 0.15rem; flex-shrink: 0; accent-color: #ea580c; cursor: pointer; }
+        .tdm-badge { display: inline-block; font-size: 0.68rem; font-weight: 700; background: #ea580c; color: white; border-radius: 3px; padding: 0.05rem 0.3rem; margin-right: 0.3rem; vertical-align: middle; }
+        .tdm-actions { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 4px; padding: 0.75rem; font-size: 0.82rem; }
+        .tdm-actions h5 { margin: 0 0 0.5rem 0; color: #9a3412; font-size: 0.82rem; }
+        .tdm-actions ul { margin: 0; padding-left: 1.2rem; color: #7c2d12; }
+        .tdm-actions li { margin-bottom: 0.4rem; }
+
+        /* ── Other Nephrotoxics Section ── */
+        .nephrotox-box {
+            border: 1px solid #ddd6fe;
+            border-top: 4px solid #7c3aed;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f5f3ff;
+        }
+        .nephrotox-box h4 { margin: 0 0 0.2rem 0; color: #5b21b6; font-size: 0.9rem; }
+        .nephrotox-subtitle { font-size: 0.78rem; color: #6d28d9; margin-bottom: 0.75rem; }
+        .nephrotox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: #1e293b;
+            padding: 0.5rem 0.6rem;
+            background: #fff;
+            border: 1px solid #ddd6fe;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 0.4rem;
+            user-select: none;
+        }
+        .nephrotox-item:hover { background: #f5f3ff; }
+        .nephrotox-item input[type="checkbox"] { margin-top: 0.15rem; flex-shrink: 0; accent-color: #7c3aed; cursor: pointer; }
+        .nephrotox-actions { background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 4px; padding: 0.75rem; font-size: 0.82rem; }
+        .nephrotox-actions h5 { margin: 0 0 0.5rem 0; color: #5b21b6; font-size: 0.82rem; }
+        .nephrotox-actions ul { margin: 0; padding-left: 1.2rem; color: #4c1d95; }
+        .nephrotox-actions li { margin-bottom: 0.4rem; }
+
         /* Disclaimer Section */
         .disclaimer {
             margin-top: 2rem;
@@ -434,6 +499,28 @@
             </div>
         </div>
 
+        <!-- TDM Antibiotics Box -->
+        <div id="tdmBox" class="tdm-box" style="display:none;">
+            <h4>&#9879; 腎毒性抗生素 — TDM 劑量調整 <span style="font-weight:400;font-size:0.78rem;">（不可直接停藥）</span></h4>
+            <div class="tdm-subtitle">請勾選病人目前使用中的抗生素，產生 TDM 操作建議：</div>
+            <div id="tdmGrid"></div>
+            <div id="tdmActions" class="tdm-actions" style="display:none;">
+                <h5>TDM 監測與劑量調整建議：</h5>
+                <ul id="tdmActionList"></ul>
+            </div>
+        </div>
+
+        <!-- Other Nephrotoxics Box -->
+        <div id="nephrotoxBox" class="nephrotox-box" style="display:none;">
+            <h4>&#128308; 其他腎毒性藥物 — 評估換藥 / 劑量調整</h4>
+            <div class="nephrotox-subtitle">請勾選病人目前使用中的藥物，產生個別化建議：</div>
+            <div id="nephrotoxGrid"></div>
+            <div id="nephrotoxActions" class="nephrotox-actions" style="display:none;">
+                <h5>建議操作：</h5>
+                <ul id="nephrotoxActionList"></ul>
+            </div>
+        </div>
+
         <button class="btn-copy" onclick="copyResults()">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
             複製文字摘要 (Copy to Clipboard)
@@ -547,6 +634,110 @@
         document.getElementById('sadmansActionList').innerHTML = checked.map(d =>
             `<li><strong>[${d.letter}] ${d.name}</strong>：${d.action}</li>`
         ).join('');
+    }
+
+    // ── TDM Antibiotics ──
+    const TDM_DRUGS = [
+        {
+            id: 'tdm_vanc', label: 'TDM', name: 'Vancomycin',
+            examples: 'Vancocin',
+            action: 'AUC-guided TDM（目標 AUC/MIC 400–600 mg·h/L，不再用單純 trough）；AKI 時大幅延長給藥間隔（如 q24h 或更長）；每次劑量調整後重新採樣計算 AUC（ASHP/IDSA/SIDP 2020）'
+        },
+        {
+            id: 'tdm_ag', label: 'TDM', name: 'Aminoglycosides',
+            examples: 'Gentamicin, Amikacin, Tobramycin',
+            action: '優先評估是否可換用腎毒性較低的替代抗生素；若必須使用：改為 Once-daily dosing（Hartford protocol）+ peak/trough TDM；AKI 期間避免與 Vancomycin 並用（協同腎毒性↑↑）'
+        },
+        {
+            id: 'tdm_col', label: 'TDM', name: 'Colistin / Polymyxin B',
+            examples: 'Colistimethate sodium (CMS), Polymyxin B',
+            action: '腎毒性發生率 40–60%；若有替代方案（如 Ceftazidime-avibactam、Meropenem-vaborbactam）優先換藥；若無法替代：Colistin 可考慮 CPSS 監測；避免與 Vancomycin / Aminoglycoside 並用'
+        },
+    ];
+
+    function buildTdmGrid() {
+        document.getElementById('tdmGrid').innerHTML = TDM_DRUGS.map(drug => `
+            <label class="tdm-item" for="${drug.id}">
+                <input type="checkbox" id="${drug.id}" onchange="updateTdmActions()">
+                <span>
+                    <span class="tdm-badge">${drug.label}</span><strong>${drug.name}</strong><br>
+                    <span style="color:#64748b;font-size:0.75rem;">${drug.examples}</span>
+                </span>
+            </label>
+        `).join('');
+    }
+
+    function updateTdmActions() {
+        const checked = TDM_DRUGS.filter(d => { const el = document.getElementById(d.id); return el && el.checked; });
+        const actionsEl = document.getElementById('tdmActions');
+        if (checked.length === 0) { actionsEl.style.display = 'none'; return; }
+        actionsEl.style.display = 'block';
+        document.getElementById('tdmActionList').innerHTML = checked.map(d =>
+            `<li><strong>${d.name}</strong>：${d.action}</li>`
+        ).join('');
+    }
+
+    // ── Other Nephrotoxics ──
+    const NEPHROTOX_DRUGS = [
+        {
+            id: 'ntx_amph', name: 'Amphotericin B（傳統劑型）',
+            examples: 'Fungizone（非脂質體劑型）',
+            action: '換用脂質體劑型（Liposomal AmB / AmBisome）—腎毒性大幅降低；若無法換藥：每次給藥前 0.9% NaCl 500–1000 mL 預水化 + 每日監測 SCr 及電解質（K、Mg）'
+        },
+        {
+            id: 'ntx_cni', name: 'Calcineurin Inhibitors（CNI）',
+            examples: 'Tacrolimus (FK506), Cyclosporine (CsA)',
+            action: '強制 TDM（Tacrolimus: trough 依適應症；CsA: C0 或 C2）；AKI 時腎毒性風險倍增，考慮暫時降低目標濃度；與移植科 / 風濕科協調決定劑量調整幅度'
+        },
+        {
+            id: 'ntx_lmwh', name: 'LMWH（低分子量肝素）',
+            examples: 'Enoxaparin (Clexane), Nadroparin (Fraxiparine)',
+            action: '腎清除↓ → 蓄積 → 出血風險↑；建議改換 UFH（q8h + APTT monitoring）；若堅持使用 LMWH：anti-Xa 監測（peak 目標: 0.5–1.0 IU/mL，給藥後 4h 採樣）'
+        },
+        {
+            id: 'ntx_acv', name: 'Acyclovir IV',
+            examples: 'Zovirax IV（靜脈注射劑型）',
+            action: '結晶腎病變（Crystal nephropathy）風險；AKI 時依 eGFR 調整劑量（eGFR 10–25: 劑量 ×50%，頻率 q24h）；充分水化（尿量目標 ≥100 mL/hr）；緩慢滴注（≥1 小時）'
+        },
+        {
+            id: 'ntx_dig', name: 'Digoxin',
+            examples: 'Lanoxin',
+            action: '窄治療指數（narrow TI）；腎清除↓ → 蓄積 → 毒性（心跳過緩、AV block、視覺異常）；TDM（目標 0.5–0.9 ng/mL）；考慮劑量減半或延長間隔；監測血鉀（低鉀加劇毒性）'
+        },
+    ];
+
+    function buildNephrotoxGrid() {
+        document.getElementById('nephrotoxGrid').innerHTML = NEPHROTOX_DRUGS.map(drug => `
+            <label class="nephrotox-item" for="${drug.id}">
+                <input type="checkbox" id="${drug.id}" onchange="updateNephrotoxActions()">
+                <span>
+                    <strong>${drug.name}</strong><br>
+                    <span style="color:#64748b;font-size:0.75rem;">${drug.examples}</span>
+                </span>
+            </label>
+        `).join('');
+    }
+
+    function updateNephrotoxActions() {
+        const checked = NEPHROTOX_DRUGS.filter(d => { const el = document.getElementById(d.id); return el && el.checked; });
+        const actionsEl = document.getElementById('nephrotoxActions');
+        if (checked.length === 0) { actionsEl.style.display = 'none'; return; }
+        actionsEl.style.display = 'block';
+        document.getElementById('nephrotoxActionList').innerHTML = checked.map(d =>
+            `<li><strong>${d.name}</strong>：${d.action}</li>`
+        ).join('');
+    }
+
+    function getTdmCopyText() {
+        const checked = TDM_DRUGS.filter(d => { const el = document.getElementById(d.id); return el && el.checked; });
+        if (checked.length === 0) return '';
+        return `\n\n[腎毒性抗生素 TDM]\n` + checked.map(d => `- ${d.name}：${d.action}`).join('\n');
+    }
+
+    function getNephrotoxCopyText() {
+        const checked = NEPHROTOX_DRUGS.filter(d => { const el = document.getElementById(d.id); return el && el.checked; });
+        if (checked.length === 0) return '';
+        return `\n\n[其他腎毒性藥物]\n` + checked.map(d => `- ${d.name}：${d.action}`).join('\n');
     }
 
     // ── Main Calculator ──
@@ -692,16 +883,27 @@
         if (warnings.length > 0)
             document.getElementById('warningList').innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
 
-        // 6. SADMANS — show only when AKI confirmed
+        // 6. Drug Safety Panels — show only when AKI confirmed
         const sadmansBox = document.getElementById('sadmansBox');
+        const tdmBox = document.getElementById('tdmBox');
+        const nephrotoxBox = document.getElementById('nephrotoxBox');
         if (isAki) {
             sadmansBox.style.display = 'block';
             buildSadmansGrid();
-            // Reset action panel (user may re-check drugs for this new result)
             document.getElementById('sadmansActions').style.display = 'none';
             document.getElementById('tripleWhammy').style.display   = 'none';
+
+            tdmBox.style.display = 'block';
+            buildTdmGrid();
+            document.getElementById('tdmActions').style.display = 'none';
+
+            nephrotoxBox.style.display = 'block';
+            buildNephrotoxGrid();
+            document.getElementById('nephrotoxActions').style.display = 'none';
         } else {
             sadmansBox.style.display = 'none';
+            tdmBox.style.display = 'none';
+            nephrotoxBox.style.display = 'none';
         }
 
         // 7. Build copy text
@@ -748,12 +950,14 @@
         document.getElementById('biomarker').value = 'NotTested';
         document.getElementById('resultBox').style.display = "none";
         document.getElementById('sadmansBox').style.display = "none";
+        document.getElementById('tdmBox').style.display = "none";
+        document.getElementById('nephrotoxBox').style.display = "none";
         copyTextData = "";
     }
 
     function copyResults() {
         if (!copyTextData) return;
-        const fullText = copyTextData + getSadmansCopyText();
+        const fullText = copyTextData + getSadmansCopyText() + getTdmCopyText() + getNephrotoxCopyText();
         navigator.clipboard.writeText(fullText).then(() => {
             const btn = document.querySelector('.btn-copy');
             const originalText = btn.innerHTML;
