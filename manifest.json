@@ -1,0 +1,26 @@
+{
+  "name": "KDIGO 2026 AKI Calculator",
+  "short_name": "AKI Calc",
+  "description": "KDIGO 2026 AKI C-U-B 獨立分期與決策輔助工具，支援 SADMANS / TDM / Post-AKI KAMPS",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "lang": "zh-TW",
+  "orientation": "any",
+  "categories": ["medical", "health"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

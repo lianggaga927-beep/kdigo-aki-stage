@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KDIGO 2026 AKI Calculator (C-U-B System)</title>
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="AKI Calc">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <style>
         :root {
             --primary-color: #0f172a;
@@ -401,6 +407,48 @@
         .restart-table tr:nth-child(even) td { background: #f0fdf4; }
         .postaki-note { font-size: 0.75rem; color: #047857; margin-top: 0.4rem; line-height: 1.5; }
 
+        /* PWA Banners */
+        .pwa-banner {
+            display: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.82rem;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+        #updateBanner {
+            background: #eff6ff;
+            border-bottom: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+        #installBanner {
+            background: #f0fdf4;
+            border-bottom: 1px solid #bbf7d0;
+            color: #166534;
+        }
+        .pwa-action-btn {
+            padding: 0.3rem 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .pwa-reload-btn { background: #1d4ed8; color: white; }
+        .pwa-reload-btn:hover { background: #1e3a8a; }
+        .pwa-install-btn { background: #16a34a; color: white; }
+        .pwa-install-btn:hover { background: #15803d; }
+        .pwa-dismiss-btn {
+            background: none;
+            color: inherit;
+            opacity: 0.6;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.9rem;
+        }
+
         /* Disclaimer Section */
         .disclaimer {
             margin-top: 2rem;
@@ -414,6 +462,20 @@
     </style>
 </head>
 <body>
+
+<!-- PWA：新版本通知（醫療工具更新 KDIGO 指引時顯示） -->
+<div id="updateBanner" class="pwa-banner" role="status">
+    <span>🔄 系統已更新（可能含 KDIGO 指引修訂），建議重新載入</span>
+    <button class="pwa-action-btn pwa-reload-btn" id="reloadBtn">立即更新</button>
+    <button class="pwa-action-btn pwa-dismiss-btn" id="dismissUpdateBtn" aria-label="關閉">✕</button>
+</div>
+
+<!-- PWA：安裝提示 -->
+<div id="installBanner" class="pwa-banner" role="complementary">
+    <span>📲 可安裝至主畫面，查房時離線直接開啟</span>
+    <button class="pwa-action-btn pwa-install-btn" id="installBtn">安裝 App</button>
+    <button class="pwa-action-btn pwa-dismiss-btn" id="dismissInstallBtn" aria-label="關閉">✕</button>
+</div>
 
 <div class="container">
     <h1>KDIGO 2026 AKI Calculator</h1>
@@ -1029,6 +1091,52 @@
         document.getElementById('postakiBox').style.display = "none";
         copyTextData = "";
     }
+
+    // ── PWA ───────────────────────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            // 偵測新版 SW（KDIGO 指引更新時觸發）
+            reg.addEventListener('updatefound', () => {
+                const incoming = reg.installing;
+                incoming.addEventListener('statechange', () => {
+                    if (incoming.state === 'installed' && navigator.serviceWorker.controller) {
+                        document.getElementById('updateBanner').style.display = 'flex';
+                    }
+                });
+            });
+        }).catch(err => console.warn('SW 註冊失敗:', err));
+    }
+
+    document.getElementById('reloadBtn').addEventListener('click', () => window.location.reload());
+    document.getElementById('dismissUpdateBtn').addEventListener('click', () => {
+        document.getElementById('updateBanner').style.display = 'none';
+    });
+
+    // 安裝提示
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        document.getElementById('installBanner').style.display = 'flex';
+    });
+
+    document.getElementById('installBtn').addEventListener('click', () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(() => {
+            deferredInstallPrompt = null;
+            document.getElementById('installBanner').style.display = 'none';
+        });
+    });
+
+    document.getElementById('dismissInstallBtn').addEventListener('click', () => {
+        document.getElementById('installBanner').style.display = 'none';
+    });
+
+    window.addEventListener('appinstalled', () => {
+        document.getElementById('installBanner').style.display = 'none';
+        deferredInstallPrompt = null;
+    });
 
     function copyResults() {
         if (!copyTextData) return;
