@@ -1,4 +1,4 @@
-const CACHE = 'kdigo-aki-v1';
+const CACHE = 'kdigo-aki-v2';
 const ASSETS = [
   './index.html',
   './manifest.json',
