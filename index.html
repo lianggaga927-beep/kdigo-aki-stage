@@ -424,9 +424,33 @@
             color: #1e40af;
         }
         #installBanner {
-            background: #f0fdf4;
-            border-bottom: 1px solid #bbf7d0;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: #ffffff;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
             color: #166534;
+            max-width: 320px;
+            padding: 12px 14px;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.84rem;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            text-align: left;
+        }
+        @media (max-width: 640px) {
+            #installBanner {
+                left: 12px;
+                right: 12px;
+                max-width: calc(100vw - 24px);
+                top: 12px;
+            }
         }
         .pwa-action-btn {
             padding: 0.3rem 0.75rem;
@@ -470,11 +494,11 @@
     <button class="pwa-action-btn pwa-dismiss-btn" id="dismissUpdateBtn" aria-label="關閉">✕</button>
 </div>
 
-<!-- PWA：安裝提示 -->
+<!-- PWA：安裝提示（固定浮窗，右上角） -->
 <div id="installBanner" class="pwa-banner" role="complementary">
-    <span>📲 可安裝至主畫面，查房時離線直接開啟</span>
-    <button class="pwa-action-btn pwa-install-btn" id="installBtn">安裝 App</button>
-    <button class="pwa-action-btn pwa-dismiss-btn" id="dismissInstallBtn" aria-label="關閉">✕</button>
+    <span style="flex:1;min-width:0;">📲 可安裝至主畫面<br><span style="font-size:0.75rem;opacity:0.8;">查房時離線直接開啟</span></span>
+    <button class="pwa-action-btn pwa-install-btn" id="installBtn" style="flex-shrink:0;">安裝</button>
+    <button class="pwa-action-btn pwa-dismiss-btn" id="dismissInstallBtn" aria-label="關閉" style="flex-shrink:0;">✕</button>
 </div>
 
 <div class="container">
